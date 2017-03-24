@@ -16,14 +16,15 @@ function load_data()
     var t_movieObj;
 
 
+    console.log(".[dataloader.load_data] \n - Calling MovieData");
+    loadMovieData();
+
+}
+
+function loadMovieData()
+{
     // Loading Data - MovieLens/movie.csv
     d3.csv("data/MovieLens/movie.csv", function (error_movie, csvData_movie) {
-
-    // Loading Data - MovieLens/link.csv
-    d3.csv("data/MovieLens/link.csv", function (error_link, csvData_link) {
-
-    // Loading data - MovieLends/rating.csv
-    d3.csv("data/MovieLens/rating.csv", function (error_rating, csvData_rating) {
         mLens_movies = csvData_movie;
         // mLens_links = csvData_link;
 
@@ -52,45 +53,74 @@ function load_data()
             t_movieObj.title = d.title;
             t_movieObj.genres = t_allGenres;
             t_movieObj.imdbID = -1;
-            t_movieObj.ratings = [];
+            // t_movieObj.ratings = [];
+            t_movieObj.ratingNum = 0;
+            t_movieObj.ratingAvg = -1;
 
-            movies.push(t_movieObj);
+            // movies.push(t_movieObj);
+            movies[d.movieId] = t_movieObj;
         });
 
+
+        console.log(".[dataloader.loadMovieData] \n - Calling LinkData");
+        loadLinkData();
+    });
+}
+
+function loadLinkData()
+{
+    // Loading Data - MovieLens/link.csv
+    d3.csv("data/MovieLens/link.csv", function (error_link, csvData_link) {
+
         csvData_link.forEach(function (d, i) {
-            if (movies[i].id != d.movieId)
+            if (movies[d.movieId] == null)
             {
-                console.log("!![dataloader.load_data.linkData] \n" +
-                    "Error nonmatching chronological movieId: " +
+                console.log("!![dataloader.loadLinkData] \n" +
+                    "Error nonmatching movieId: " +
                     d.movieId);
 
-                movies[(movieId-1)].imdbID = d.imdbId;
+                // movies[movieId].imdbID = d.imdbId;
             }
             else
             {
-                movies[i].imdbID = d.imdbId;
+                movies[d.movieId].imdbID = d.imdbId;
             }
             
             // movies[i].tmdbID = d.tmdbId;
         });
 
+
+        console.log(".[dataloader.loadLinkData] \n - Calling RatingData");
+        loadRatingData();
+    });
+}
+
+function loadRatingData()
+{
+    // Loading data - MovieLends/rating.csv
+    // d3.csv("data/MovieLens/rating.csv", function (error_rating, csvData_rating) {
+    // d3.csv("data/MovieLens/rating-condensed.csv", function (error_rating, csvData_rating) {
+    d3.csv("data/MovieLens/rating-summary.csv", function (error_rating, csvData_rating) {
+
         csvData_rating.forEach(function (d, i) {
-            // if (movies[i].id != d.movieId)
-            // {
-            //     console.log("!![dataloader.load_data.ratingData] \n" +
-            //         "Error nonmatching chronological movieId: " +
-            //         d.movieId);
-            // }
-            // else
-            // {
-                movies[(d.movieId-1)].ratings.push(d.rating);
-            // }
+            if (movies[d.movieId] == null)
+            {
+                // console.log("!![dataloader.loadRatingData] \n" +
+                //     "Error nonmatching movieId: " +
+                //     d.movieId);
+            }
+            else
+            {
+                // movies[d.movieId].ratings = d.ratings.split("|");
+                movies[d.movieId].ratingNum = d.numRatings;
+                movies[d.movieId].ratingAvg = d.ratingAvg;
+            }
 
             // console.log(i);
-            if (i%1000000 == 0)
-            {
-                console.log("Ratings foreach loop: working on it.");
-            }
+            // if (i%1000000 == 0)
+            // {
+            //     console.log("Ratings foreach loop: working on it.");
+            // }
             
             // movies[i].tmdbID = d.tmdbId;
         });
@@ -103,10 +133,10 @@ function load_data()
         console.log(".[dataloader.load_data] \n - Printing movies obj");
         console.log(movies);
 
-    });     // end rating.csv
-    });     // end link.csv
-    });     // end movie.csv
+        console.log(".[dataloader.load_data] \n - Printing csvData_rating obj");
+        // console.log(csvData_rating);
 
+    });
 }
 
 
