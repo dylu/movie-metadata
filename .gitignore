@@ -1,0 +1,12 @@
+
+#eclipse
+data/preprocess/.metadata
+data/preprocess/.recommenders
+data/preprocess/RemoteSystemsTempFiles
+
+
+#data
+
+*.zip
+*.gz
+*.list

@@ -1,0 +1,12 @@
+
+#eclipse
+
+.settings
+bin
+.classpath
+.project
+
+
+#imported data
+
+*.csv
