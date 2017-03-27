@@ -1,0 +1,59 @@
+
+/* Default Start */
+html, body
+{
+    /* Adjusts font-size to be managable via 'em' values. */
+    font-size: 62.5%;
+
+    /* Adjusts margins and padding. (a mini 'css reset') */
+    margin: 0px;
+    padding: 0px;
+    vertical-align: baseline;
+}
+
+h1, h2, h3, p, ul, li
+{
+    /*font-size: 1.4em;*/
+    margin: 0em;
+    padding: 0em;
+    vertical-align: baseline;
+}
+
+
+h1
+{
+    font-size: 5.6em;
+}
+
+h2
+{
+    font-size: 4.2em;
+}
+
+h3
+{
+    font-size: 2.4em;
+}
+
+body
+{
+    background-color: #EAEAEA;
+}
+
+#header
+{
+    /* T R B L */
+    margin: 1em 2em ;
+}
+
+.d3_module
+{
+    margin: 2em 2em 3.6em 4.2em;
+    /*background-color: #EEE;*/
+}
+
+.d3_module svg
+{
+    background-color: #F6F6F6;
+}
+
