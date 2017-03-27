@@ -133,7 +133,7 @@ function loadRatingData()
         console.log(".[dataloader.load_data] \n - Printing movies obj");
         console.log(movies);
 
-        console.log(".[dataloader.load_data] \n - Printing csvData_rating obj");
+        // console.log(".[dataloader.load_data] \n - Printing csvData_rating obj");
         // console.log(csvData_rating);
 
     });
