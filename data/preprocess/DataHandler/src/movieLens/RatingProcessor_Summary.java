@@ -14,14 +14,13 @@ import java.io.PrintWriter;
  * making it easier for Javascript to process.
  * 
  * @author dlu1
- * @version 03.24.17
+ * @version 03.26.17
  */
 public class RatingProcessor_Summary
 {
 //	private static final int NUM_MOVIES = 131262;
 	private static final int NUM_MOVIES = 131270;
 	private static String[] ratings;
-	private static String[] results;
 	
 	public static void readIn()
 	{
@@ -34,7 +33,12 @@ public class RatingProcessor_Summary
 			
 			// First line contains the headers.
 			String nextLine = br.readLine();
+			System.out.println("  [Reading data]" +
+					"  Header Line:" + nextLine);
+			
 			nextLine = br.readLine();
+			System.out.println("  [Reading data]" +
+					"  First Line:" + nextLine);
 			
 			while (nextLine != null)
 			{
@@ -74,8 +78,8 @@ public class RatingProcessor_Summary
 			e.printStackTrace();
 		}
 
-		out.println("\"movieId\", \"numRatings\" , \"ratingAvg\"");
-		for (int i = 0; i < ratings.length; i++)
+		out.println("\"movieId\",\"numRatings\",\"ratingAvg\"");
+		for (int i = 1; i < ratings.length; i++)
 		{
 			if (ratings[i] != null)
 			{
@@ -87,7 +91,7 @@ public class RatingProcessor_Summary
 				}
 				avg /= tokens.length;
 				
-				out.print(i+1 + ",");
+				out.print(i + ",");
 				out.print(tokens.length + ",");
 				out.println(avg);
 			}
@@ -104,7 +108,6 @@ public class RatingProcessor_Summary
 	public static void main(String[] args)
 	{
 		ratings = new String[NUM_MOVIES];
-		results = new String[NUM_MOVIES];
 		System.out.println("Reading in data.");
 		readIn();
 		System.out.println();

@@ -14,7 +14,7 @@ import java.io.PrintWriter;
  * making it easier for Javascript to process.
  * 
  * @author dlu1
- * @version 03.24.17
+ * @version 03.26.17
  */
 public class RatingProcessor_Condensed
 {
@@ -34,7 +34,12 @@ public class RatingProcessor_Condensed
 
 			// First line contains the headers.
 			String nextLine = br.readLine();
+			System.out.println("  [Reading data]" +
+					"  Header Line:" + nextLine);
+			
 			nextLine = br.readLine();
+			System.out.println("  [Reading data]" +
+					"  First Line:" + nextLine);
 			
 			while (nextLine != null)
 			{
@@ -74,7 +79,8 @@ public class RatingProcessor_Condensed
 			rating = ratings[i][2];
 			
 //			if (aggregate[movieId].isEmpty())
-			if (aggregate[movieId] == null)
+			if (aggregate[movieId] == null ||
+				aggregate[movieId].equals(""))
 			{
 				aggregate[movieId] = rating + "";
 			}
@@ -120,12 +126,12 @@ public class RatingProcessor_Condensed
 			e.printStackTrace();
 		}
 
-		out.println("\"movieId\", \"ratings\"");
-		for (int i = 0; i < aggregate.length; i++)
+		out.println("\"movieId\",\"ratings\"");
+		for (int i = 1; i < aggregate.length; i++)
 		{
 			if (aggregate[i] != null)
 			{
-				out.print(i+1 + ",");
+				out.print(i + ",");
 				out.println(aggregate[i]);
 			}
 			
@@ -141,7 +147,7 @@ public class RatingProcessor_Condensed
 	
 	public static void main(String[] args)
 	{
-		ratings = new double[20000263][3];
+		ratings = new double[20001000][3];
 		System.out.println("Reading in data.");
 		readIn();
 		System.out.println();
