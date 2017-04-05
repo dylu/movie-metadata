@@ -9,7 +9,8 @@ function load_data()
 {
     // Instantiating global variables.
     movies = [];
-    mLens_genres = new Object();
+    // mLens_genres = new Object();
+    mLens_genres = [];
 
     // Instantiating temporary variables.
     var t_allGenres;
@@ -30,7 +31,7 @@ function loadMovieData()
 
         csvData_movie.forEach(function (d, i) {
             // console.log(d.genres.split("|"));
-            t_allGenres = d.genres.split("|");
+            t_allGenres = d.genres.replace("(no genres listed)","(none)").split("|");
             t_allGenres.forEach(function (elem_genre) {
                 // if ([elem_genre] == "1 - September 11 (2002)\"")
                 // {
@@ -38,8 +39,10 @@ function loadMovieData()
                 //     console.log(d);
                 // }
                 if (!mLens_genres.hasOwnProperty([elem_genre]))
+                // if (mLens_genres[elem_genre] == null || mLens_genres <= 0)
                 {
                     mLens_genres[elem_genre] = 1;
+                    mLens_genres.length++;
                 }
                 else
                 {
