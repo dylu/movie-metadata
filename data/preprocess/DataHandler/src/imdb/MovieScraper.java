@@ -12,56 +12,44 @@ import com.jaunt.*;
 public class MovieScraper
 {
 	// General UserAgent data
-	public static UserAgent userAgent;
-	public static String baseurl = "http://www.imdb.com/title/tt";
-	public static String imdbID = "0114709";
-	public static String visiturl = "";
-	public static Document userDoc;
+	public final String BASE_URL = "http://www.imdb.com/title/tt";
+	private String visiturl = "";
+	private Document userDoc;
+	private String imdbID = "";
 	
 	// Movie-specific Fields
-	public static String ratingAvg;
-	public static String ratingNum;
-	public static String releaseDate;
-	public static String releaseYear;
-	public static int durationMin;
-	public static String mpaaRating;
-	public static String director;
-	public static String country;
-	public static String language;
-	public static String budget;
-	public static String gross;
+	private String ratingAvg;
+	private String ratingNum;
+	private String releaseDate;
+	private String releaseYear;
+	private int durationMin;
+	private String mpaaRating;
+	private String director;
+	private String country;
+	private String language;
+	private String budget;
+	private String gross;
 	
 	/**
 	 * Constructor for the MovieScraper class.
 	 * 
 	 * @param id
 	 */
-	public MovieScraper(String id)
+	public MovieScraper(String id, UserAgent ua)
 	{
 		imdbID = id;
-		visiturl = baseurl + imdbID + "/";
-//		visiturl = "www.google.com/";
-	}
-	
-	public static void init()
-	{
-		// Creating a new userAgent (headless browser)
-		userAgent = new UserAgent();
-		userAgent.settings.autoSaveAsHTML = true;
-	}
-	
-	public static void connect()
-	{
+		visiturl = BASE_URL + imdbID + "/";
+		
 		try {
-			userAgent.visit(visiturl);
+			ua.visit(visiturl);
 //			System.out.println(userAgent.doc.innerHTML());
-			userDoc = userAgent.doc;
+			userDoc = ua.doc;
 		} catch (ResponseException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void parse()
+	public void parse()
 	{
 		try {
 			ratingAvg =
@@ -161,8 +149,31 @@ public class MovieScraper
 			e.printStackTrace();
 		}
 	}
-	
-	public static void printResults()
+
+	/**
+	 * Returns a string formatted with csv standards.
+	 * @return csv-formatted string of fields.
+	 */
+	public String combineFields()
+	{
+		return 	imdbID 		+ "," +
+				ratingAvg 	+ "," +
+				ratingNum 	+ "," +
+				releaseDate + "," +
+				releaseYear + "," +
+				durationMin + "," +
+				mpaaRating 	+ "," +
+				director 	+ "," +
+				country 	+ "," +
+				language 	+ "," +
+				budget 		+ "," +
+				gross;
+	}
+
+	/**
+	 * Mostly used for debugging.
+	 */
+	public void printResults()
 	{
 		System.out.println(" ---- Printing Output: ----");
 		System.out.println(" * Movie: " + imdbID);
@@ -192,15 +203,4 @@ public class MovieScraper
 		System.out.println("");
 	}
 	
-	public static void main(String[] args)
-	{
-		MovieScraper test = new MovieScraper("0114709");
-		init();
-		connect();
-		parse();
-		
-		printResults();
-		
-	}
-
 }
