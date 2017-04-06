@@ -49,24 +49,54 @@ public class MovieScraper
 		}
 	}
 	
-	public void parse()
+	private void grabRatingAvg()
 	{
 		try {
 			ratingAvg =
 					userDoc.findFirst("span class=\"rating\"")
 					.getText();
-			
+		} catch (NotFound e) {
+			ratingAvg = "-1";
+		}
+	}
+	
+	private void grabRatingNum()
+	{
+		try {
 			ratingNum =
 					userDoc.findFirst("span class=\"small\" " + 
 							"itemprop=\"ratingCount\"")
 					.getText();
-			
-			mpaaRating =
-					userDoc.findFirst("span itemprop=\"contentRating\"")
-					.getText();
 		} catch (NotFound e) {
-			e.printStackTrace();
+			ratingNum = "-1";
 		}
+	}
+	
+	private void grabMPAA()
+	{
+		try {
+			mpaaRating =
+					userDoc.findFirst("div class=\"title_wrapper\"")
+					.findFirst("div class=\"subtext\"")
+					.getText()
+					.replaceAll("\n", "")
+					.replaceAll(",","")
+					.replaceAll(" ", "");
+		} catch (NotFound e) {
+			mpaaRating = "None";
+		}
+		
+		if (mpaaRating.isEmpty())
+		{
+			mpaaRating = "None";
+		}
+	}
+	
+	public void parse()
+	{
+		grabRatingAvg();
+		grabRatingNum();
+		grabMPAA();
 		
 		Element summaryE = null;
 		
