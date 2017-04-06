@@ -21,15 +21,21 @@ public class DBProcessor
 	{
 		// Creating a new userAgent (headless browser)
 		userAgent = new UserAgent();
-		userAgent.settings.autoSaveAsHTML = true;
+		userAgent.settings.autoSaveAsHTML = false;
 	}
 	
 	public static void main(String[] args)
 	{
 		init();
 
+		// Toy Story
 //		MovieScraper test = new MovieScraper("0114709", userAgent);
-		MovieScraper test = new MovieScraper("113497", userAgent);
+		
+		// Jumanji
+//		MovieScraper test = new MovieScraper("113497", userAgent);
+		
+		MovieScraper test = new MovieScraper("0114710", userAgent);
+		
 		test.parse();
 		test.printResults();
 	}

@@ -64,18 +64,39 @@ public class MovieScraper
 			mpaaRating =
 					userDoc.findFirst("span itemprop=\"contentRating\"")
 					.getText();
-
-			Element summaryE = userDoc.findFirst("div class=" + 
+		} catch (NotFound e) {
+			e.printStackTrace();
+		}
+		
+		Element summaryE = null;
+		
+		try {
+			summaryE = userDoc.findFirst("div class=" + 
 							"\"plot_summary \"");
-			
-			director = summaryE.findFirst(
+		} catch (NotFound e) {
+			try {
+				summaryE = userDoc.findFirst("div class=" + 
+								"\"plot_summary minPlotHeightWithPoster\"");
+			} catch (NotFound e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		try {
+			if (summaryE != null)
+			{
+				director = summaryE.findFirst(
 						"span itemprop=\"director\" itemscope " + 
 						"itemtype=\"http://schema.org/Person\"")
 					.findFirst(
 						"span class=\"itemprop\" itemprop=\"name\"")
 					.getText();
-			
-			
+			}
+		} catch (NotFound e) {
+			e.printStackTrace();
+		}
+		
+		try {
 			Element detailsE = userDoc.findFirst("div class = " + 
 							"\"article\" id=\"titleDetails\"");
 			
