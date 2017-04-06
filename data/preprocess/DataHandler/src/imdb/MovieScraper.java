@@ -15,14 +15,16 @@ public class MovieScraper
 	public final String BASE_URL = "http://www.imdb.com/title/tt";
 	private String visiturl = "";
 	private Document userDoc;
-	private String imdbID = "";
+	private String mLensID;
+	private String imdbID;
+	private boolean sanitized;
 	
 	// Movie-specific Fields
 	private String ratingAvg;
 	private String ratingNum;
 	private String releaseDate;
 	private String releaseYear;
-	private int durationMin;
+	private String durationMin;
 	private String mpaaRating;
 	private String director;
 	private String country;
@@ -35,10 +37,13 @@ public class MovieScraper
 	 * 
 	 * @param id
 	 */
-	public MovieScraper(String id, UserAgent ua)
+	public MovieScraper(String mLensID, String id, UserAgent ua, boolean verbose)
 	{
+		this.mLensID = mLensID;
 		imdbID = id;
+		sanitized = false;
 		visiturl = BASE_URL + imdbID + "/";
+		initFields();
 		
 		try {
 			ua.visit(visiturl);
@@ -47,6 +52,37 @@ public class MovieScraper
 		} catch (ResponseException e) {
 			e.printStackTrace();
 		}
+		
+		if (verbose)
+		{
+			try {
+				System.out.println(
+						"     -- [MovieScraper] -v:  (" +
+						imdbID + ")  " + 
+						userDoc.findFirst("div class=\"title_wrapper\"")
+						.findFirst("h1")
+						.getText()
+						.replace("&nbsp;", "")
+						.replace("  ", ""));
+			} catch (NotFound e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void initFields()
+	{
+		ratingAvg = "";
+		ratingNum = "";
+		releaseDate = "";
+		releaseYear = "";
+		durationMin = "";
+		mpaaRating = "";
+		director = "";
+		country = "";
+		language = "";
+		budget = "";
+		gross = "";
 	}
 	
 	private void grabRatingAvg()
@@ -68,7 +104,7 @@ public class MovieScraper
 							"itemprop=\"ratingCount\"")
 					.getText();
 		} catch (NotFound e) {
-			ratingNum = "-1";
+			ratingNum = "0";
 		}
 	}
 	
@@ -82,6 +118,7 @@ public class MovieScraper
 					.replaceAll("\n", "")
 					.replaceAll(",","")
 					.replaceAll(" ", "");
+			
 		} catch (NotFound e) {
 			mpaaRating = "None";
 		}
@@ -92,12 +129,8 @@ public class MovieScraper
 		}
 	}
 	
-	public void parse()
+	private void grabDirector()
 	{
-		grabRatingAvg();
-		grabRatingNum();
-		grabMPAA();
-		
 		Element summaryE = null;
 		
 		try {
@@ -122,27 +155,39 @@ public class MovieScraper
 						"span class=\"itemprop\" itemprop=\"name\"")
 					.getText();
 			}
+			else
+			{
+				director = "Unavailable";
+			}
+		} catch (NotFound e) {
+			director = "Unavailable";
+		}
+	}
+	
+	private void grabDetailElements()
+	{
+		Element detailsE = null;
+		
+		try {
+			detailsE = userDoc.findFirst("div class = " + 
+							"\"article\" id=\"titleDetails\"");
 		} catch (NotFound e) {
 			e.printStackTrace();
 		}
 		
-		try {
-			Element detailsE = userDoc.findFirst("div class = " + 
-							"\"article\" id=\"titleDetails\"");
-			
-//			System.out.println(details.innerText());
-			
-//			String test =
-//					userDoc.findFirst("span itemprop=\"contentRating\"").getText();
-			
-			
-			Elements detElems = detailsE.findEach("div class=\"txt-block\"");
-			Element tmpTitle;
-			
-			for (Element elem : detElems)
+		if (detailsE == null)
+		{
+			return;
+		}
+		
+		Elements detElems = detailsE.findEach("div class=\"txt-block\"");
+		Element tmpTitle;
+		
+		for (Element elem : detElems)
+		{
+			if (!elem.getText().contains("Show detailed"))
 			{
-				if (!elem.getText().contains("Show detailed"))
-				{
+				try {
 					tmpTitle = elem.findFirst("h4 class=\"inline\"");
 					
 //					System.out.println("---- New Elem.");
@@ -155,7 +200,16 @@ public class MovieScraper
 								.replaceAll("\n", "")
 								.replaceAll("     ","")
 								.replaceAll("   ", "");
-						releaseYear = releaseDate.split(" ")[2];
+						
+						if (!releaseDate.isEmpty() && 
+								releaseDate.split(" ").length > 2)
+						{
+							releaseYear = releaseDate.split(" ")[2];
+						}
+						else
+						{
+							releaseYear = "Unavailable";
+						}
 					}
 					else if (tmpTitle.getText().equals("Country:"))
 					{
@@ -187,18 +241,49 @@ public class MovieScraper
 					}
 					else if (tmpTitle.getText().equals("Runtime:"))
 					{
-						durationMin = Integer.parseInt(
+						durationMin = 
 								elem.findFirst("time")
-								.getText().split(" ")[0]);
+								.getText().split(" ")[0];
 					}
+				} catch (NotFound e) {
+					e.printStackTrace();
 				}
-				
 			}
-			
-		} catch (NotFound e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
+	}
+	
+	public void parse()
+	{
+		grabRatingAvg();
+		grabRatingNum();
+		grabMPAA();
+		grabDirector();
+		grabDetailElements();
+	}
+	
+	private void sanitizeFields()
+	{
+		if (!sanitized)
+		{
+			mLensID = "\"" + mLensID + "\"";
+			imdbID = "\"" + imdbID + "\"";
+			ratingAvg = "\"" + ratingAvg + "\"";
+			ratingNum = "\"" + ratingNum + "\"";
+			releaseDate = "\"" + (releaseDate.isEmpty() ? 
+					"Unavailable":releaseDate) + "\"";
+			releaseYear = "\"" + (releaseYear.isEmpty() ? 
+					"Unavailable":releaseYear) + "\"";
+			durationMin = "\"" + (durationMin.isEmpty() ? "0":durationMin) + "\"";
+			mpaaRating = "\"" + (mpaaRating.isEmpty() ? 
+					"Unavailable":mpaaRating) + "\"";
+			director = "\"" + (director.isEmpty() ? "Unavailable":director) + "\"";
+			country = "\"" + (country.isEmpty() ? "Unavailable":country) + "\"";
+			language = "\"" + (language.isEmpty() ? "Unavailable":language) + "\"";
+			budget = "\"" + (budget.isEmpty() ? "Unavailable":budget) + "\"";
+			gross = "\"" + (gross.isEmpty() ? "Unavailable":gross) + "\"";
+		}
+		sanitized = true;
 	}
 
 	/**
@@ -207,7 +292,10 @@ public class MovieScraper
 	 */
 	public String combineFields()
 	{
-		return 	imdbID 		+ "," +
+		sanitizeFields();
+		
+		return 	mLensID 	+ "," + 
+				imdbID 		+ "," +
 				ratingAvg 	+ "," +
 				ratingNum 	+ "," +
 				releaseDate + "," +
@@ -227,7 +315,8 @@ public class MovieScraper
 	public void printResults()
 	{
 		System.out.println(" ---- Printing Output: ----");
-		System.out.println(" * Movie: " + imdbID);
+		System.out.println(" * Movie MovieLens ID: " + mLensID);
+		System.out.println(" * Movie IMDb ID:      " + imdbID);
 		System.out.println("");
 		System.out.println("- Average Rating");
 		System.out.println("   " + ratingAvg);
