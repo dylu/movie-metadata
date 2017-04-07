@@ -2,7 +2,6 @@ package imdb;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,10 +26,15 @@ public class DBProcessor
 	private static BufferedReader reader;
 	private static PrintWriter writer;
 	
-	private static final int BATCH_SIZE = 100;
-	private static final int ESTIMATED_SIZE = 27300;
-	private static final String IN_FILE = "link.csv";
-	private static final String OUT_FILE = "combined_metadata.csv";
+	private static final int BATCH_SIZE = 200;
+//	private static final int ESTIMATED_SIZE = 27300;
+//	private static final String IN_FILE = "link.csv";
+//	private static final String OUT_FILE = "combined_metadata.csv";
+//	private static final int ESTIMATED_SIZE = 5000;
+	private static final int ESTIMATED_SIZE = 2000;
+	private static final String num = "00";
+	private static final String IN_FILE_PREFIX = "link-split-";
+	private static final String OUT_FILE_PREFIX = "combined_metadata-";
 	
 	private static void init()
 	{
@@ -47,9 +51,11 @@ public class DBProcessor
 		reader = null;
 		writer = null;
 		try {
-			reader = new BufferedReader(new FileReader(IN_FILE));
+			reader = new BufferedReader(
+					new FileReader(IN_FILE_PREFIX + num + ".csv"));
 			writer = new PrintWriter(
-					new BufferedWriter(new FileWriter(OUT_FILE)));
+					new BufferedWriter(
+					new FileWriter(OUT_FILE_PREFIX + num + ".csv")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -89,15 +95,15 @@ public class DBProcessor
 		
 		for (int i = 0; i < mLenIDs.size(); i++)
 		{
-			if (i % BATCH_SIZE == 0)
+			if (i % (BATCH_SIZE/4) == 0)
 			{
 				System.out.println("  generateCSV.processing: #" + i);
-				if (i != 0)
-				{
-					System.out.println("  [DBProcessor]generateCSV: " + 
-										"flushing metadata to file.");
-					writeCSV();
-				}
+			}
+			if (i % BATCH_SIZE == 0 && i != 0)
+			{
+				System.out.println("  [DBProcessor]generateCSV: " + 
+									"flushing metadata to file.");
+				writeCSV();
 			}
 			
 			mScraper = new MovieScraper(
@@ -157,6 +163,8 @@ public class DBProcessor
 		writeCSVHeader();
 		
 		generateCSV();
+		
+		writeCSV();
 		closeWriter();
 	}
 

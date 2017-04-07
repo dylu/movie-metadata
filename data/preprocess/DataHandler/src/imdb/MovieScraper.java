@@ -58,7 +58,7 @@ public class MovieScraper
 			try {
 				System.out.println(
 						"     -- [MovieScraper] -v:  (" +
-						imdbID + ")  " + 
+						imdbID + ") \t" + 
 						userDoc.findFirst("div class=\"title_wrapper\"")
 						.findFirst("h1")
 						.getText()
