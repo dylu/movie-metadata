@@ -32,7 +32,7 @@ public class DBProcessor
 //	private static final String OUT_FILE = "combined_metadata.csv";
 //	private static final int ESTIMATED_SIZE = 5000;
 	private static final int ESTIMATED_SIZE = 2000;
-	private static final String num = "00";
+	private static String num = "02";
 	private static final String IN_FILE_PREFIX = "link-split-";
 	private static final String OUT_FILE_PREFIX = "combined_metadata-";
 	
@@ -145,6 +145,7 @@ public class DBProcessor
 	
 	public static void main(String[] args)
 	{
+		num = args[0];
 		init();
 
 		// Toy Story
@@ -165,6 +166,10 @@ public class DBProcessor
 		generateCSV();
 		
 		writeCSV();
+		
+		// Writer Confirmation at end of file.
+		writer.println("--End of File--");
+		
 		closeWriter();
 	}
 
