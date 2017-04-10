@@ -65,36 +65,97 @@ function loadMovieData()
         });
 
 
-        console.log(".[dataloader.loadMovieData] \n - Calling LinkData");
-        loadLinkData();
+        // console.log(".[dataloader.loadMovieData] \n - Calling LinkData");
+        // loadLinkData();
+
+        console.log(".[dataloader.loadMovieData] \n - Calling IMDbData");
+        loadIMDbData();
     });
 }
 
-function loadLinkData()
+// Link Data Already in IMDB Data.
+
+// function loadLinkData()
+// {
+//     // Loading Data - MovieLens/link.csv
+//     d3.csv("data/MovieLens/link.csv", function (error_link, csvData_link) {
+
+//         csvData_link.forEach(function (d, i) {
+//             if (movies[d.movieId] == null)
+//             {
+//                 console.log("!![dataloader.loadLinkData] \n" +
+//                     "Error - nonmatching movieId: " +
+//                     d.movieId);
+
+//                 // movies[movieId].imdbID = d.imdbId;
+//             }
+//             else
+//             {
+//                 movies[d.movieId].imdbID = d.imdbId;
+//             }
+            
+//             // movies[i].tmdbID = d.tmdbId;
+//         });
+
+
+//         console.log(".[dataloader.loadLinkData] \n - Calling IMDbData");
+//         loadIMDbData();
+//     });
+// }
+
+function loadIMDbData()
+{
+    imdbHelper(0);
+}
+
+function imdbHelper(idx)
 {
     // Loading Data - MovieLens/link.csv
-    d3.csv("data/MovieLens/link.csv", function (error_link, csvData_link) {
+    d3.csv("data/IMDb/postProcess/combined_metadata-0"+idx+".csv", function (error_link, csvData_link) {
 
-        csvData_link.forEach(function (d, i) {
-            if (movies[d.movieId] == null)
+        var t_movieID;
+
+        csvData_link.forEach(function (d, i)
+        {
+            t_movieID = d.mLensID;
+
+            if (movies[t_movieID] == null)
             {
-                console.log("!![dataloader.loadLinkData] \n" +
-                    "Error nonmatching movieId: " +
-                    d.movieId);
-
-                // movies[movieId].imdbID = d.imdbId;
+                console.log("!![dataloader.imdbHelper] \n" +
+                    "Error - nonmatching movieId: " +
+                    t_movieID);
             }
             else
             {
-                movies[d.movieId].imdbID = d.imdbId;
+                movies[t_movieID].imdbID = d.imdbID;
+                movies[t_movieID].imdbRatingAvg = d.ratingAvg;
+                movies[t_movieID].imdbRatingNum = d.ratingNum;
+                movies[t_movieID].releaseDate = d.releaseDate;
+                movies[t_movieID].releaseYear = d.releaseYear;
+                movies[t_movieID].durationMin = d.durationMin;
+                movies[t_movieID].mpaaRating = d.mpaaRating;
+                movies[t_movieID].director = d.director;
+                movies[t_movieID].country = d.country;
+                movies[t_movieID].language = d.language;
+                movies[t_movieID].budget = d.budget;
+                movies[t_movieID].gross = d.gross;
             }
-            
-            // movies[i].tmdbID = d.tmdbId;
         });
 
-
-        console.log(".[dataloader.loadLinkData] \n - Calling RatingData");
-        loadRatingData();
+        if (idx >=0 && idx < 6)
+        {
+            console.log(".[dataloader.imdbHelper] \n - Calling imdbHelper with value: " + (idx+1));
+            imdbHelper(idx+1);
+        }
+        else if (idx == 6)
+        {
+            console.log(".[dataloader.imdbHelper] \n - Calling RatingData");
+            loadRatingData();
+        }
+        else
+        {
+            console.log("!![dataloader.imdbHelper] \n Error - Invalid index value.");
+        }
     });
 }
 
@@ -133,7 +194,7 @@ function loadRatingData()
         // console.log(mLens_genres);
         // console.log(mLens_links);
 
-        console.log(".[dataloader.load_data] \n - Printing movies obj");
+        console.log(".[dataloader.loadRatingData] \n - Printing movies obj");
         console.log(movies);
 
         // console.log(".[dataloader.load_data] \n - Printing csvData_rating obj");
