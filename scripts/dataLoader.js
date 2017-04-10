@@ -127,24 +127,24 @@ function imdbHelper(idx)
             }
             else
             {
-                movies[t_movieID].imdbID = d.imdbID;
+                movies[t_movieID].imdbID        = d.imdbID;
                 movies[t_movieID].imdbRatingAvg = d.ratingAvg;
                 movies[t_movieID].imdbRatingNum = d.ratingNum;
-                movies[t_movieID].releaseDate = d.releaseDate;
-                movies[t_movieID].releaseYear = d.releaseYear;
-                movies[t_movieID].durationMin = d.durationMin;
-                movies[t_movieID].mpaaRating = d.mpaaRating;
-                movies[t_movieID].director = d.director;
-                movies[t_movieID].country = d.country;
-                movies[t_movieID].language = d.language;
-                movies[t_movieID].budget = d.budget;
-                movies[t_movieID].gross = d.gross;
+                movies[t_movieID].releaseDate   = d.releaseDate;
+                movies[t_movieID].releaseYear   = d.releaseYear;
+                movies[t_movieID].durationMin   = d.durationMin;
+                movies[t_movieID].mpaaRating    = d.mpaaRating;
+                movies[t_movieID].director      = d.director;
+                movies[t_movieID].country       = d.country;
+                movies[t_movieID].language      = d.language;
+                movies[t_movieID].budget        = d.budget;
+                movies[t_movieID].gross         = d.gross;
             }
         });
 
         if (idx >=0 && idx < 6)
         {
-            console.log(".[dataloader.imdbHelper] \n - Calling imdbHelper with value: " + (idx+1));
+            // console.log(".[dataloader.imdbHelper] \n - Calling imdbHelper with value: " + (idx+1));
             imdbHelper(idx+1);
         }
         else if (idx == 6)
