@@ -139,6 +139,18 @@ function imdbHelper(idx)
                 movies[t_movieID].language      = d.language;
                 movies[t_movieID].budget        = d.budget;
                 movies[t_movieID].gross         = d.gross;
+
+                // If there are at least 3 units in Release date, 2nd should* be month.
+                if (d.releaseDate.split(" ").length > 2)
+                {
+                    movies[t_movieID].releaseDay  = d.releaseDate.split(" ")[0];
+                    movies[t_movieID].releaseMonth  = d.releaseDate.split(" ")[1];
+                }
+                else
+                {
+                    movies[t_movieID].releaseDay  = "Unavailable";
+                    movies[t_movieID].releaseMonth  = "Unavailable";
+                }
             }
         });
 
