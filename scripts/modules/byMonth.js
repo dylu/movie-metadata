@@ -2,11 +2,11 @@
 // var movies;
 // var mLens_movies;
 
-var selected_genre;
+// var selected_genre;
 
-function drawModule_genre()
+function drawModule_month()
 {
-    var graphName = "byGenre";
+    graphName = "byMonth";
 
 	var catColors = ['#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
 					 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',

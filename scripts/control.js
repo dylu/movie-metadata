@@ -11,4 +11,5 @@ function execute_control()
 	// console.log(mLens_movies);
 
 	drawModule_genre();
+	drawModule_month();
 }
