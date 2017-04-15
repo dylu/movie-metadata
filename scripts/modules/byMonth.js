@@ -4,6 +4,11 @@
 
 // var selected_genre;
 
+var monthNames = ["January", "February", "March", "April",  
+                      "May", "June", "July", "August", "September", 
+                      "October", "November", "December"];
+
+
 function drawModule_month()
 {
     graphName = "byMonth";
@@ -19,19 +24,16 @@ function drawModule_month()
 					 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7'];
 
 	var trans_dur = 600;
-	// var genreTree = new Object();
-	var genreTree = [];
-	// var mod_width = 600;
+
 	var mod_width = 1000;
 	var mod_height = 500;
-	var numGenres = 0;
 	var chart_width = 900;
 	var chart_height = 400;
 	var chart_Xoffset = 60;
 	var chart_Yoffset = 40;
 	var genreLocalMax = 0;
 
-	var genreArr = [];
+	var monthArr = [];
 
 	d3.select("#" + graphName)
         .append("svg")
@@ -44,67 +46,42 @@ function drawModule_month()
         // .
 
 
-    console.log("Printing mLens_genres.");
-    console.log(mLens_genres);
-
-    console.log("Printing mLens_genres length.");
-    console.log(mLens_genres.length);
-
-    for (var property in mLens_genres)
-    {
-	    if (mLens_genres.hasOwnProperty(property))
-	    {
-	    	// do stuff
-	    	genreArr[numGenres] = property;
-	    	numGenres++;
-
-	    	genreLocalMax = Math.max(genreLocalMax, mLens_genres[property]);
-	    }
-	}
-
-	genreArr.sort();
-
-	console.log("Printing numGenres, genreArr.");
-	console.log(numGenres);
-	console.log(genreArr);
-
-	init_genreTree(genreTree, genreArr);
+	init_monthArray(monthArr);
 
 	var t_id;
-	var t_genres;
+	var t_month;
 	var t_rating;
 
 	// for (var movie in movies)
 	movies.forEach(function(movie)
 	{
 		t_id = movie.id;
-		t_genres = movie.genres;
-		// Currently mapping all non-votes to zero.
-		// TODO: REMAP UNRATED TO -1.
-		t_rating = Math.max(movie.ratingAvg, 0);
+		t_month = parseMonthStr(movie.releaseMonth);
 
-		// "Floor" the rating to nearest bucket starting value.
-		// e.g. 3.74 -> 3.5,  4.29 -> 4.0,  2.5 -> 2.5.
-		t_rating = t_rating - (t_rating % 0.5);
-		// Edge case of maximum rating.
-		if (t_rating == 5)
-		{
-			t_rating = 4.5;
-		}
+        if (t_month >= 0)
+        {
+            // Currently mapping all non-votes to zero.
+            // TODO: REMAP UNRATED TO -1.
+            if (movie.imdbRatingAvg != "Unavailable")
+            {
+                t_rating = Math.max(movie.imdbRatingAvg, 0);
+            }
+            else
+            {
+                // MovieLens has ratings out of 5.
+                t_rating = Math.max(movie.ratingAvg, 0) * 2;
+            }
 
-		// Multiplying everything to deal with js not handling .5 values.
-		t_rating = t_rating * 2;
-
-		// for (var t_genre in t_genres)
-		t_genres.forEach(function(t_genre)
-		{
-			// console.log(t_genre);
-			genreTree[t_genre][t_rating].push(t_id);
-		});
+            monthArr[t_month].movieIds.push(t_id);
+            monthArr[t_month].totalRating += t_rating;
+        }
+		
 	});
 
-	console.log("Printing genreTree (After Populating)");
-	console.log(genreTree);
+	console.log("Printing monthArr (After Populating)");
+	console.log(monthArr);
+
+    /*
 
 	// var x - d3.scaleBand().r
 	var svg = d3.select("#"+graphName).select("svg");
@@ -158,23 +135,7 @@ function drawModule_month()
     var yAxis = d3.axisLeft();
     yAxis.scale(yScaleAxis);
 
-    // svg.select("#xAxis")
-    //     .transition()
-    //     .duration(trans_dur)
-    //     .attr("transform", "translate(" + 0 + "," + (chartHeight - yAxisHeight) + ")")
-    //     .call(xAxis)
-    //   .selectAll("text")
-    //     .attr("y", -5)
-    //     .attr("x", -28)
-    //     .attr("transform", "rotate(-90)");
 
-    // svg.select("#yAxis")
-    //     .transition()
-    //     .duration(trans_dur)
-    //     .attr("transform", "translate(" + xAxisWidth + "," + (0) + ")")
-    //     .call(yAxis);
-
-    // svg.select("g")
     svg
     	.append("g")
     	.attr("transform", "translate(" + chart_Xoffset + ", " + (chart_height + chart_Yoffset) + ")")
@@ -191,13 +152,6 @@ function drawModule_month()
     // Create the bars (hint: use #bars)
     var bars;
 
-    // genreTree.forEach(function(genreElem) {
-    // for (var genreElem in genreTree) {
-    	// console.log("hello");
-    	// console.log(genreElem);
-    	// bars = svg.append("g").selectAll("rect").data(genreTree.Action);
-    	// bars = svg.append("g").selectAll("rect").data(genreTree[genreElem]);
-	    // var bars = svg.append("g").selectAll("rect").data(genreTree);
 	    bars = svg.append("g").selectAll("rect").data(d3.entries(mLens_genres));
 
 	    bars = bars.enter()
@@ -261,25 +215,6 @@ function drawModule_month()
         })
         // Tooltip follows mouse.
         .on('mousemove', function(d) {
-            // var curr_loc = d3.mouse(this);
-
-            // // fine tuning
-            // // var xAdj = 20 + detailsXOffset;
-            // // var yAdj = 32 + headerOffset;
-            // var xAdj = -120;
-            // var yAdj = 22;
-            
-            // var tt = d3.select("#bars_tooltip")
-            //     .style("left", (curr_loc[0] + xAdj) + "px")
-            //     .style("top", (curr_loc[1] + yAdj) + "px");
-
-            // tt.select("#title")
-            //     .text(capitalize([selectedDimension].toString()) + 
-            //         " " + d.year + ":");
-            // tt.select("#value")
-            //     .text(d[selectedDimension]);
-
-            // tt.classed("hidden", false);
         })
         // Original bar color restored.
         .on('mouseout', function(d) {
@@ -296,20 +231,6 @@ function drawModule_month()
 
         	selected_genre = d;
 
-            // Reset old 'selected' value.
-            // d3.selectAll(".selected")
-            //     .transition()
-            //     .duration(trans_dur/4)
-            //     .style("fill", function(d) {
-            //         return colorScale(d[selectedDimension]);
-            //     });
-            // d3.selectAll(".selected").classed("selected", false);
-
-            // // selectedYear = d.year;
-            // updateInfo(d);
-            // clearMap();
-            // updateMap(d);
-
             var nodeSelection = d3.select(this);
 
             nodeSelection
@@ -324,7 +245,7 @@ function drawModule_month()
             // Outputting selection to console.
             // console.log("Selected the " + d.year + " value for " + 
             //     [selectedDimension] + ", " + d[selectedDimension]);
-        });
+        }); */
     
 
     // Color is separate, to prevent selecting a new chart from overriding current selection.
@@ -340,30 +261,38 @@ function drawModule_month()
 
 
 /**
- * Function to initialize a genreTree.
- * 3-tiered structure:
- * T1: Genre Name  (e.g. 'Adventure')
- * T2: Bucket Val  (0.5 intervals from 0-5)
- * T3: Movie IDs   (e.g. 01, for Toy Story)
+ * Function to initialize a monthArray.
+ * 2-tiered structure:
+ * T1: Month Num   (e.g. '1', for Jan)
+ * T2a: Numbers    (Total Ratings, Average stuff.)
+ * T2b: Movie IDs  (e.g. 01, for Toy Story)
  */
-function init_genreTree(genreTree, genreArr)
+function init_monthArray(monthArr)
 {
-	var t_bucketName;
-	var t_buckets;
+    console.log("monthNames: ");
+    console.log(monthNames);
 
-	for (i = 0; i < genreArr.length; i++)
-	{
-		t_buckets = [];
-		for (j = 0; j < 10; j++)
-		{
-			// t_bucketName = j/2;
-			t_bucketName = j;
-			t_buckets[t_bucketName] = [];
-		}
+    console.log("monthArr: ");
+    console.log(monthArr);
 
-		genreTree[genreArr[i]] = t_buckets;
-	}
+    var monthObj;
+    for (i = 0; i < 12; i++)
+    {
+        monthObj = new Object();
 
-	console.log("Printing genreTree");
-	console.log(genreTree);
+        monthObj.monthName = monthNames[i];
+        monthObj.totalRating = 0;
+        monthObj.movieIds = [];
+
+        monthArr[i] = monthObj;
+    }
+}
+
+
+/**
+ * Helper function; converts a string to a number.
+ */
+function parseMonthStr(monthStr)
+{
+    return monthNames.indexOf(monthStr);
 }
