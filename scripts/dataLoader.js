@@ -226,27 +226,39 @@ function loadRatingData()
 
 function filter_movies()
 {
-    filters.num++;
-    filters.genre = ["Action", "Drama"];
+    // filters.num++;
+    // filters.genre = ["Action", "Drama"];
+
+
+    var filterStr = "None.";
 
     if (filters.num == 0)
     {
-        console.log("hello1");
         movies_filtered = movies;
     }
     else
     {
-        console.log("hello2");
         movies_filtered = movies.filter(applyFilters);
+
+
+        filterStr = filters.genre[0];
+        for (i = 1; i < filters.genre.length; i++)
+        {
+            filterStr += (", " + filters.genre[i]);
+        }
     }
 
+    
 
+
+    console.log("Filter:  Genres [" + filterStr + "]");
+    console.log(" -- ");
     console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
     console.log(movies_filtered);
 
     console.log(".[dataloader.filter_movies] \n - Printing sizes");
-    console.log(movies.length);
-    console.log(movies_filtered.length);
+    console.log("  movies num: " + movies.length);
+    console.log("filtered num: " + movies_filtered.length);
 }
 
 function applyFilters(movElem)
@@ -260,6 +272,7 @@ function applyFilters(movElem)
 
     if (filters.genre.length > 0)
     {
+
         // filters.genre.forEach(function (genre) {
             // console.log(movElem.genres.includes(genre));
             // if (!movElem.genres.includes(genre))

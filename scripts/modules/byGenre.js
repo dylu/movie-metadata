@@ -324,6 +324,16 @@ function drawModule_genre()
             // Outputting selection to console.
             // console.log("Selected the " + d.year + " value for " + 
             //     [selectedDimension] + ", " + d[selectedDimension]);
+
+            // console.log(selected_genre);
+
+            console.log("---------");
+            console.log("--CLICK--");
+            console.log("---------");
+
+            filters.num++;
+            filters.genre.push(selected_genre.key);
+            filter_movies();
         });
     
 
