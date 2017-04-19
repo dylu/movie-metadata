@@ -1,5 +1,7 @@
 /** Global Variables containing data **/
 var movies;
+var movies_filtered;
+var filters;
 var mLens_movies;
 // var mLens_links;
 var mLens_genres;
@@ -9,6 +11,11 @@ function load_data()
 {
     // Instantiating global variables.
     movies = [];
+    filters = new Object();
+    filters.num = 0;
+    filters.genre = [];
+    filters.month = [];
+    // filters.year = [];
     // mLens_genres = new Object();
     mLens_genres = [];
 
@@ -201,7 +208,7 @@ function loadRatingData()
             // movies[i].tmdbID = d.tmdbId;
         });
 
-
+        filter_movies();
         execute_control();
         // console.log(mLens_genres);
         // console.log(mLens_links);
@@ -217,6 +224,67 @@ function loadRatingData()
 
 
 
+function filter_movies()
+{
+    filters.num++;
+    filters.genre = ["Action", "Drama"];
 
-// console.log("hello2");
-// console.log(mLens_movies);
+    if (filters.num == 0)
+    {
+        console.log("hello1");
+        movies_filtered = movies;
+    }
+    else
+    {
+        console.log("hello2");
+        movies_filtered = movies.filter(applyFilters);
+    }
+
+
+    console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
+    console.log(movies_filtered);
+
+    console.log(".[dataloader.filter_movies] \n - Printing sizes");
+    console.log(movies.length);
+    console.log(movies_filtered.length);
+}
+
+function applyFilters(movElem)
+{
+    if (filters.num == 0)
+    {
+        return true;
+    }
+
+    // var passFlag = true;
+
+    if (filters.genre.length > 0)
+    {
+        // filters.genre.forEach(function (genre) {
+            // console.log(movElem.genres.includes(genre));
+            // if (!movElem.genres.includes(genre))
+            // {
+            //     console.log("no, " + movElem.id);
+            //     return false;
+            // }
+        for (i = 0; i < filters.genre.length; i++)
+        {
+            if (!movElem.genres.includes(filters.genre[i]))
+            {
+                return false;
+            }
+        }
+            
+        // });
+    }
+
+    return true;
+}
+
+
+
+
+
+
+
+
