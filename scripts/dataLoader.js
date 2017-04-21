@@ -4,7 +4,11 @@ var movies_filtered;
 var filters;
 var mLens_movies;
 // var mLens_links;
-var mLens_genres;
+
+// var mLens_genres;
+// var mLens_genres_filtered;
+var db_genres;
+var db_genres_filtered;
 
 
 function load_data()
@@ -18,6 +22,7 @@ function load_data()
     // filters.year = [];
     // mLens_genres = new Object();
     mLens_genres = [];
+    mLens_genres_filtered = [];
 
     // Instantiating temporary variables.
     var t_allGenres;
@@ -25,16 +30,18 @@ function load_data()
 
 
     console.log(".[dataloader.load_data] \n - Calling MovieData");
-    loadMovieData();
+    loadMovieData(true);
 
 }
 
-function loadMovieData()
+function loadMovieData(populate)
 {
     // Loading Data - MovieLens/movie.csv
     d3.csv("data/MovieLens/movie.csv", function (error_movie, csvData_movie) {
         mLens_movies = csvData_movie;
         // mLens_links = csvData_link;
+
+        var filterFlag;
 
         csvData_movie.forEach(function (d, i) {
             // console.log(d.genres.split("|"));
@@ -55,6 +62,34 @@ function loadMovieData()
                 {
                     mLens_genres[elem_genre]++;
                 }
+
+                
+
+                // Filtered obj.
+                // if (filters.genre.length > 0)
+                // {
+                //     filterFlag = true;
+                //     for (i = 0; i < filters.genre.length; i++)
+                //     {
+                //         if (!t_allGenres.includes(filters.genre[i]))
+                //         {
+                //             filterFlag = false;
+                //         }
+                //     }
+
+                //     if (filterFlag)
+                //     {
+                //         if (!mLens_genres_filtered.hasOwnProperty([elem_genre]))
+                //         {
+                //             mLens_genres_filtered[elem_genre] = 1;
+                //             mLens_genres_filtered.length++;
+                //         }
+                //         else
+                //         {
+                //             mLens_genres_filtered[elem_genre]++;
+                //         }
+                //     }
+                // }
             });
 
             // Building the 'movies' global variable.
@@ -75,8 +110,11 @@ function loadMovieData()
         // console.log(".[dataloader.loadMovieData] \n - Calling LinkData");
         // loadLinkData();
 
-        console.log(".[dataloader.loadMovieData] \n - Calling IMDbData");
-        loadIMDbData();
+        if (populate)
+        {
+            console.log(".[dataloader.loadMovieData] \n - Calling IMDbData");
+            loadIMDbData();
+        }
     });
 }
 
@@ -226,6 +264,8 @@ function loadRatingData()
 
 function filter_movies()
 {
+    // loadMovieData(false);
+
     // filters.num++;
     // filters.genre = ["Action", "Drama"];
 
@@ -259,6 +299,8 @@ function filter_movies()
     console.log(".[dataloader.filter_movies] \n - Printing sizes");
     console.log("  movies num: " + movies.length);
     console.log("filtered num: " + movies_filtered.length);
+
+    // execute_control();
 }
 
 function applyFilters(movElem)
