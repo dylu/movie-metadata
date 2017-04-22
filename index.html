@@ -28,7 +28,18 @@
 	</div>
 
 	<!-- <div class="d3_module" id="genreSelector"></div> -->
-	<div class="d3_module" id="byGenre"></div>
+	<div class="d3_module" id="byGenre">
+		<svg width="500" height="400" id="genreGraph">
+	        <g id="xAxisGenre"></g>
+	        <g id="yAxisGenre"></g>
+	        <g id="barsGenre"></g>
+	        <g id="barsGenre_filtered"></g>
+	        <div id="barsGenre_tooltip" class="svg_tooltip hidden">
+	            <span id="title">placeholder</span>
+	            <span id="value">placeholder</span>
+	        </div>
+	    </svg>
+	</div>
 	<div class="d3_module" id="byMonth"></div>
 	<div class="d3_module" id="byReleaseDate"></div>
 	

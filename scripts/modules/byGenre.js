@@ -6,48 +6,33 @@ var selected_genre;
 function drawModule_genre()
 {
     var graphName = "byGenre";
+    var trans_dur = 600;                // Transition Duration in Milliseconds.
+    // var mod_width = 600;
+    var mod_width = 1000;
+    var mod_height = 500;
+    var chart_width = 900;
+    var chart_height = 400;
+    var chart_Xoffset = 60;
+    var chart_Yoffset = 40;
     update_genresDB(false);
-
-	// var catColors = ['#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
-	// 				 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
-	// 				 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
-	// 				 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5'];
- //    var catColors2 = ['#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8',
- //                     '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8',
- //                     '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8',
- //                     '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8'];
 
     var color_default   = '#42A5F5';    // Blue     400
     var color_filtered  = '#5C6BC0';    // Indigo   400
     var color_hover     = '#4FC3F7';    // L. Blue  300
     var color_click     = '#7E57C2';    // D. Purp  400
-
-	// var catColorsLight = 
-	// 				['#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
-	// 				 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
-	// 				 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
-	// 				 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7'];
-
-	var trans_dur = 600;
-	// var genreTree = new Object();
-	// var genreTree = [];
-	// var mod_width = 600;
-	var mod_width = 1000;
-	var mod_height = 500;
-	var numGenres = 0;
-	var chart_width = 900;
-	var chart_height = 400;
-	var chart_Xoffset = 60;
-	var chart_Yoffset = 40;
+    
+    var numGenres = 0;
 	var genreLocalMax = 0;
-
 	var genreArr = [];
 
+
 	d3.select("#" + graphName)
-        .append("svg")
+        // .append("svg")
+        .select("svg")
         .attr("width", mod_width)
-        .attr("height", mod_height)
-        .append("g");
+        .attr("height", mod_height);
+        // .append("g");
+
         // .append("rect")
         // .attr("x", 0)
         // .attr("y", 0)
@@ -77,53 +62,19 @@ function drawModule_genre()
 
 	genreArr.sort();
 
-	console.log("Printing numGenres, genreArr.");
-	console.log(numGenres);
-	console.log(genreArr);
-
-	// init_genreTree(genreTree, genreArr);
+	// console.log("Printing numGenres, genreArr.");
+	// console.log(numGenres);
+	// console.log(genreArr);
 
 	var t_id;
 	var t_genres;
 	var t_rating;
 
-	// for (var movie in movies)
-	movies.forEach(function(movie)
-	{
-		t_id = movie.id;
-		t_genres = movie.genres;
-		// Currently mapping all non-votes to zero.
-		// TODO: REMAP UNRATED TO -1.
-		t_rating = Math.max(movie.ratingAvg, 0);
-
-		// "Floor" the rating to nearest bucket starting value.
-		// e.g. 3.74 -> 3.5,  4.29 -> 4.0,  2.5 -> 2.5.
-		t_rating = t_rating - (t_rating % 0.5);
-		// Edge case of maximum rating.
-		if (t_rating == 5)
-		{
-			t_rating = 4.5;
-		}
-
-		// Multiplying everything to deal with js not handling .5 values.
-		t_rating = t_rating * 2;
-
-		// for (var t_genre in t_genres)
-		// t_genres.forEach(function(t_genre)
-		// {
-		// 	// console.log(t_genre);
-		// 	genreTree[t_genre][t_rating].push(t_id);
-		// });
-	});
-
-	console.log("Printing genreTree (After Populating)");
-	// console.log(genreTree);
 
 	// var x - d3.scaleBand().r
 	var svg = d3.select("#"+graphName).select("svg");
 
 	var xScale = d3.scaleBand()
-        // .domain(genreTree)
         .domain(genreArr)
         // .domain(["Action", "Animation", "Drama"])
         // .range([xAxisWidth, chartWidth])
@@ -143,31 +94,6 @@ function drawModule_genre()
         .domain([0, genreLocalMax])
         .range([chart_height, 0]).nice();
 
-
-    // Create colorScale
-    // var colorScale = d3.scaleBand()
-    //     .domain(genreArr)
-    //     .range(["#90CAF9", "#1565C0"]);     // Blue 200 - 800
-    // var colorScale = d3.scaleBand()
-    // var colorScale = d3.scaleOrdinal()
-    // 	.domain(genreArr)
-    // 	// .range(d3.schemeCategory20);
-    // 	.range(catColors);
-
-    // var colorScale2 = d3.scaleOrdinal()
-    //     .domain(genreArr)
-    //     // .range(d3.schemeCategory20);
-    //     .range(catColors2);
-
-    // Hover Interaction.
-    // var hover_colorScale = d3.scaleBand()
-    //     .domain(genreArr)
-    //     .range(["#9FA8DA", "#3949AB"]);     // Cyan 200 - 800
-
-    // var hover_colorScale = d3.scaleOrdinal()
-    //     .domain(genreArr)
-    // 	// .range(d3.schemeCategory20c);
-    // 	.range(catColorsLight);
 
 
     var xAxis = d3.axisBottom();
@@ -193,15 +119,15 @@ function drawModule_genre()
     //     .call(yAxis);
 
     // svg.select("g")
-    svg
-    	.append("g")
+    svg.select("#xAxisGenre")
+    	// .append("g")
     	.attr("transform", "translate(" + chart_Xoffset + ", " + (chart_height + chart_Yoffset) + ")")
     	// .attr("transform", "translate(" + 40 + ", " + 440 + ")")
     	.call(xAxis);
 
     // svg.select("g")
-    svg
-    	.append("g")
+    svg.select("#yAxisGenre")
+    	// .append("g")
     	.attr("transform", "translate(" + chart_Xoffset + ", " + chart_Yoffset + ")")
     	.call(yAxis);
 
@@ -209,14 +135,8 @@ function drawModule_genre()
     // Create the bars (hint: use #bars)
     var bars;
 
-    // genreTree.forEach(function(genreElem) {
-    // for (var genreElem in genreTree) {
-    	// console.log("hello");
-    	// console.log(genreElem);
-    	// bars = svg.append("g").selectAll("rect").data(genreTree.Action);
-    	// bars = svg.append("g").selectAll("rect").data(genreTree[genreElem]);
-	    // var bars = svg.append("g").selectAll("rect").data(genreTree);
-	    bars = svg.append("g").selectAll("rect").data(d3.entries(db_genres));
+	    // bars = svg.append("g").selectAll("rect").data(d3.entries(db_genres));
+        bars = svg.select("#barsGenre").selectAll("rect").data(d3.entries(db_genres));
 
 	    bars = bars.enter()
 	        .append("rect")
@@ -264,7 +184,6 @@ function drawModule_genre()
 	        .attr("id", function(d) {
 	        	return d;
 	        });
-    // }
 
     var bars_filtered;
 
@@ -425,35 +344,6 @@ function drawModule_genre()
 
 }
 
-
-/**
- * Function to initialize a genreTree.
- * 3-tiered structure:
- * T1: Genre Name  (e.g. 'Adventure')
- * T2: Bucket Val  (0.5 intervals from 0-5)
- * T3: Movie IDs   (e.g. 01, for Toy Story)
- */
-function init_genreTree(genreTree, genreArr)
-{
-	var t_bucketName;
-	var t_buckets;
-
-	for (i = 0; i < genreArr.length; i++)
-	{
-		t_buckets = [];
-		for (j = 0; j < 10; j++)
-		{
-			// t_bucketName = j/2;
-			t_bucketName = j;
-			t_buckets[t_bucketName] = [];
-		}
-
-		genreTree[genreArr[i]] = t_buckets;
-	}
-
-	console.log("Printing genreTree");
-	console.log(genreTree);
-}
 
 
 function update_genresDB(onlyFilters)
