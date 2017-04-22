@@ -2,11 +2,8 @@
 var movies;
 var movies_filtered;
 var filters;
-var mLens_movies;
 // var mLens_links;
 
-// var mLens_genres;
-// var mLens_genres_filtered;
 var db_genres;
 var db_genres_filtered;
 
@@ -20,13 +17,9 @@ function load_data()
     filters.genre = [];
     filters.month = [];
     // filters.year = [];
-    // mLens_genres = new Object();
-    mLens_genres = [];
-    mLens_genres_filtered = [];
 
-    // Instantiating temporary variables.
-    var t_allGenres;
-    var t_movieObj;
+    db_genres = [];
+    db_genres_filtered = [];
 
 
     console.log(".[dataloader.load_data] \n - Calling MovieData");
@@ -34,63 +27,21 @@ function load_data()
 
 }
 
-function loadMovieData(populate)
+function loadMovieData(isInit)
 {
+    // Instantiating temporary variables.
+    var t_allGenres;
+    var t_movieObj;
+
     // Loading Data - MovieLens/movie.csv
     d3.csv("data/MovieLens/movie.csv", function (error_movie, csvData_movie) {
-        mLens_movies = csvData_movie;
-        // mLens_links = csvData_link;
 
         var filterFlag;
 
         csvData_movie.forEach(function (d, i) {
             // console.log(d.genres.split("|"));
             t_allGenres = d.genres.replace("(no genres listed)","(none)").split("|");
-            t_allGenres.forEach(function (elem_genre) {
-                // if ([elem_genre] == "1 - September 11 (2002)\"")
-                // {
-                //     console.log("hello -- test");
-                //     console.log(d);
-                // }
-                if (!mLens_genres.hasOwnProperty([elem_genre]))
-                // if (mLens_genres[elem_genre] == null || mLens_genres <= 0)
-                {
-                    mLens_genres[elem_genre] = 1;
-                    mLens_genres.length++;
-                }
-                else
-                {
-                    mLens_genres[elem_genre]++;
-                }
-
-                
-
-                // Filtered obj.
-                // if (filters.genre.length > 0)
-                // {
-                //     filterFlag = true;
-                //     for (i = 0; i < filters.genre.length; i++)
-                //     {
-                //         if (!t_allGenres.includes(filters.genre[i]))
-                //         {
-                //             filterFlag = false;
-                //         }
-                //     }
-
-                //     if (filterFlag)
-                //     {
-                //         if (!mLens_genres_filtered.hasOwnProperty([elem_genre]))
-                //         {
-                //             mLens_genres_filtered[elem_genre] = 1;
-                //             mLens_genres_filtered.length++;
-                //         }
-                //         else
-                //         {
-                //             mLens_genres_filtered[elem_genre]++;
-                //         }
-                //     }
-                // }
-            });
+            
 
             // Building the 'movies' global variable.
             t_movieObj = new Object();
@@ -110,54 +61,25 @@ function loadMovieData(populate)
         // console.log(".[dataloader.loadMovieData] \n - Calling LinkData");
         // loadLinkData();
 
-        if (populate)
+        if (isInit)
         {
             console.log(".[dataloader.loadMovieData] \n - Calling IMDbData");
-            loadIMDbData();
+            loadIMDbData(isInit);
         }
     });
 }
 
-// Link Data Already in IMDB Data.
 
-// function loadLinkData()
-// {
-//     // Loading Data - MovieLens/link.csv
-//     d3.csv("data/MovieLens/link.csv", function (error_link, csvData_link) {
-
-//         csvData_link.forEach(function (d, i) {
-//             if (movies[d.movieId] == null)
-//             {
-//                 console.log("!![dataloader.loadLinkData] \n" +
-//                     "Error - nonmatching movieId: " +
-//                     d.movieId);
-
-//                 // movies[movieId].imdbID = d.imdbId;
-//             }
-//             else
-//             {
-//                 movies[d.movieId].imdbID = d.imdbId;
-//             }
-            
-//             // movies[i].tmdbID = d.tmdbId;
-//         });
-
-
-//         console.log(".[dataloader.loadLinkData] \n - Calling IMDbData");
-//         loadIMDbData();
-//     });
-// }
-
-function loadIMDbData()
+function loadIMDbData(isInit)
 {
-    imdbHelper(0);
+    imdbHelper(0, isInit);
 }
 
-function imdbHelper(idx)
+function imdbHelper(idx, isInit)
 {
     // Loading Data - MovieLens/link.csv
-    d3.csv("data/IMDb/postProcess/combined_metadata-0"+idx+".csv", function (error_link, csvData_link) {
-
+    d3.csv("data/IMDb/postProcess/combined_metadata-0"+idx+".csv", function (error_link, csvData_link)
+    {
         var t_movieID;
 
         csvData_link.forEach(function (d, i)
@@ -202,12 +124,15 @@ function imdbHelper(idx)
         if (idx >=0 && idx < 6)
         {
             // console.log(".[dataloader.imdbHelper] \n - Calling imdbHelper with value: " + (idx+1));
-            imdbHelper(idx+1);
+            imdbHelper(idx+1, isInit);
         }
         else if (idx == 6)
         {
-            console.log(".[dataloader.imdbHelper] \n - Calling RatingData");
-            loadRatingData();
+            if (isInit)
+            {
+                console.log(".[dataloader.imdbHelper] \n - Calling RatingData");
+                loadRatingData(isInit);
+            }
         }
         else
         {
@@ -216,19 +141,23 @@ function imdbHelper(idx)
     });
 }
 
-function loadRatingData()
+
+/** Loads Rating Data.
+ *  Currently pulls rating data from MovieLens, instead of IMDB.
+ **/
+function loadRatingData(isInit)
 {
     // Loading data - MovieLends/rating.csv
     // d3.csv("data/MovieLens/rating.csv", function (error_rating, csvData_rating) {
     // d3.csv("data/MovieLens/rating-condensed.csv", function (error_rating, csvData_rating) {
-    d3.csv("data/MovieLens/rating-summary.csv", function (error_rating, csvData_rating) {
-
+    d3.csv("data/MovieLens/rating-summary.csv", function (error_rating, csvData_rating)
+    {
         csvData_rating.forEach(function (d, i) {
             if (movies[d.movieId] == null)
             {
-                // console.log("!![dataloader.loadRatingData] \n" +
-                //     "Error nonmatching movieId: " +
-                //     d.movieId);
+                console.log("!![dataloader.loadRatingData] \n" +
+                    "Error nonmatching movieId: " +
+                    d.movieId);
             }
             else
             {
@@ -236,26 +165,17 @@ function loadRatingData()
                 movies[d.movieId].ratingNum = d.numRatings;
                 movies[d.movieId].ratingAvg = d.ratingAvg;
             }
-
-            // console.log(i);
-            // if (i%1000000 == 0)
-            // {
-            //     console.log("Ratings foreach loop: working on it.");
-            // }
-            
-            // movies[i].tmdbID = d.tmdbId;
         });
 
         filter_movies();
-        execute_control();
-        // console.log(mLens_genres);
-        // console.log(mLens_links);
 
-        console.log(".[dataloader.loadRatingData] \n - Printing movies obj");
-        console.log(movies);
-
-        // console.log(".[dataloader.load_data] \n - Printing csvData_rating obj");
-        // console.log(csvData_rating);
+        if (isInit)
+        {
+            execute_control();
+        }
+        
+        // console.log(".[dataloader.loadRatingData] \n - Printing movies obj");
+        // console.log(movies);
 
     });
 }
@@ -270,7 +190,7 @@ function filter_movies()
     // filters.genre = ["Action", "Drama"];
 
 
-    var filterStr = "None.";
+    var filterDebugStr = "None.";
 
     if (filters.num == 0)
     {
@@ -281,20 +201,19 @@ function filter_movies()
         movies_filtered = movies.filter(applyFilters);
 
 
-        filterStr = filters.genre[0];
+        filterDebugStr = filters.genre[0];
         for (i = 1; i < filters.genre.length; i++)
         {
-            filterStr += (", " + filters.genre[i]);
+            filterDebugStr += (", " + filters.genre[i]);
         }
     }
-
     
 
 
-    console.log("Filter:  Genres [" + filterStr + "]");
+    console.log("Filter:  Genres [" + filterDebugStr + "]");
     console.log(" -- ");
-    console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
-    console.log(movies_filtered);
+    // console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
+    // console.log(movies_filtered);
 
     console.log(".[dataloader.filter_movies] \n - Printing sizes");
     console.log("  movies num: " + movies.length);
