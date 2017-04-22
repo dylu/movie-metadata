@@ -1,26 +1,36 @@
 /** Global Variables containing data **/
 // var movies;
-// var mLens_movies;
 
 var selected_genre;
 
 function drawModule_genre()
 {
     var graphName = "byGenre";
+    update_genresDB(false);
 
-	var catColors = ['#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
-					 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
-					 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
-					 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5'];
-	var catColorsLight = 
-					['#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
-					 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
-					 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
-					 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7'];
+	// var catColors = ['#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
+	// 				 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
+	// 				 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5',
+	// 				 '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5', '#42A5F5'];
+ //    var catColors2 = ['#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8',
+ //                     '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8',
+ //                     '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8',
+ //                     '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8', '#64B5F8'];
+
+    var color_default   = '#42A5F5';    // Blue     400
+    var color_filtered  = '#5C6BC0';    // Indigo   400
+    var color_hover     = '#4FC3F7';    // L. Blue  300
+    var color_click     = '#7E57C2';    // D. Purp  400
+
+	// var catColorsLight = 
+	// 				['#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
+	// 				 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
+	// 				 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7',
+	// 				 '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7', '#68B7F7'];
 
 	var trans_dur = 600;
 	// var genreTree = new Object();
-	var genreTree = [];
+	// var genreTree = [];
 	// var mod_width = 600;
 	var mod_width = 1000;
 	var mod_height = 500;
@@ -44,21 +54,24 @@ function drawModule_genre()
         // .
 
 
-    console.log("Printing mLens_genres.");
-    console.log(mLens_genres);
 
-    console.log("Printing mLens_genres length.");
-    console.log(mLens_genres.length);
+    console.log("Printing db_genres.");
+    console.log(db_genres);
 
-    for (var property in mLens_genres)
+    console.log("Printing db_genres length.");
+    console.log(db_genres.length);
+
+
+    // for (var property in mLens_genres)
+    for (var property in db_genres)
     {
-	    if (mLens_genres.hasOwnProperty(property))
+	    if (db_genres.hasOwnProperty(property))
 	    {
 	    	// do stuff
 	    	genreArr[numGenres] = property;
 	    	numGenres++;
 
-	    	genreLocalMax = Math.max(genreLocalMax, mLens_genres[property]);
+	    	genreLocalMax = Math.max(genreLocalMax, db_genres[property]);
 	    }
 	}
 
@@ -68,7 +81,7 @@ function drawModule_genre()
 	console.log(numGenres);
 	console.log(genreArr);
 
-	init_genreTree(genreTree, genreArr);
+	// init_genreTree(genreTree, genreArr);
 
 	var t_id;
 	var t_genres;
@@ -96,15 +109,15 @@ function drawModule_genre()
 		t_rating = t_rating * 2;
 
 		// for (var t_genre in t_genres)
-		t_genres.forEach(function(t_genre)
-		{
-			// console.log(t_genre);
-			genreTree[t_genre][t_rating].push(t_id);
-		});
+		// t_genres.forEach(function(t_genre)
+		// {
+		// 	// console.log(t_genre);
+		// 	genreTree[t_genre][t_rating].push(t_id);
+		// });
 	});
 
 	console.log("Printing genreTree (After Populating)");
-	console.log(genreTree);
+	// console.log(genreTree);
 
 	// var x - d3.scaleBand().r
 	var svg = d3.select("#"+graphName).select("svg");
@@ -136,20 +149,25 @@ function drawModule_genre()
     //     .domain(genreArr)
     //     .range(["#90CAF9", "#1565C0"]);     // Blue 200 - 800
     // var colorScale = d3.scaleBand()
-    var colorScale = d3.scaleOrdinal()
-    	.domain(genreArr)
-    	// .range(d3.schemeCategory20);
-    	.range(catColors);
+    // var colorScale = d3.scaleOrdinal()
+    // 	.domain(genreArr)
+    // 	// .range(d3.schemeCategory20);
+    // 	.range(catColors);
+
+    // var colorScale2 = d3.scaleOrdinal()
+    //     .domain(genreArr)
+    //     // .range(d3.schemeCategory20);
+    //     .range(catColors2);
 
     // Hover Interaction.
     // var hover_colorScale = d3.scaleBand()
     //     .domain(genreArr)
     //     .range(["#9FA8DA", "#3949AB"]);     // Cyan 200 - 800
 
-    var hover_colorScale = d3.scaleOrdinal()
-        .domain(genreArr)
-    	// .range(d3.schemeCategory20c);
-    	.range(catColorsLight);
+    // var hover_colorScale = d3.scaleOrdinal()
+    //     .domain(genreArr)
+    // 	// .range(d3.schemeCategory20c);
+    // 	.range(catColorsLight);
 
 
     var xAxis = d3.axisBottom();
@@ -198,7 +216,7 @@ function drawModule_genre()
     	// bars = svg.append("g").selectAll("rect").data(genreTree.Action);
     	// bars = svg.append("g").selectAll("rect").data(genreTree[genreElem]);
 	    // var bars = svg.append("g").selectAll("rect").data(genreTree);
-	    bars = svg.append("g").selectAll("rect").data(d3.entries(mLens_genres));
+	    bars = svg.append("g").selectAll("rect").data(d3.entries(db_genres));
 
 	    bars = bars.enter()
 	        .append("rect")
@@ -240,11 +258,67 @@ function drawModule_genre()
 	        })
 	        .style("fill", function(d) {
 	        	// console.log(colorScale(d.key));
-            	return colorScale(d.key);
+            	// return colorScale(d.key);
+                return color_default;
         	})
 	        .attr("id", function(d) {
 	        	return d;
 	        });
+    // }
+
+    var bars_filtered;
+
+    // if (filters.genre.length > 0)
+    // {
+    //     console.log("mLens_genres_filtered");
+    //     console.log(mLens_genres_filtered);
+    //     bars_filtered = svg.select("g").selectAll("rect").data(d3.entries(mLens_genres_filtered));
+
+    //     bars_filtered = bars_filtered.enter()
+    //         .append("rect")
+    //         .merge(bars_filtered);
+
+    //     bars_filtered.exit().remove();
+
+    //     bars_filtered.transition()
+    //         .duration(100)
+    //         .attr("x", function(d) {
+    //             // return 58 + xScale("Action");
+    //             // return 58 -(36/2) + xScale(genreElem);
+
+    //             // console.log(d);
+
+    //             // return 58 -(36/2) + xScale(d);
+    //             // return 58 - (36/2) + xScale(d.key);
+    //             // return chart_Xoffset - (chart_width/numGenres) + xScale(d.key);
+    //             return chart_Xoffset + xScale(d.key);
+    //         })
+    //         .attr("y", function(d, i) {
+    //             // return 2 + yScale(i/2);
+    //             // return d.length;
+
+    //             // console.log("iteration " + i + ",  val: " + d.value + ",  yScale: " + yScale(d.value));
+
+    //             // return 2 + d.length;
+    //             // console.log(i);
+    //             // return yScale(2 + d.value);
+    //             return chart_height + chart_Yoffset - yScale(d.value);
+    //         })
+    //         .attr("width", function (d) {
+    //             // return (d.length/140);
+    //             return (chart_width/numGenres)*9/10;
+    //         })
+    //         .attr("height", function (d) {
+    //             // return 36;
+    //             return yScale(d.value);
+    //         })
+    //         .style("fill", function(d) {
+    //             // console.log(colorScale(d.key));
+    //             return colorScale2(d.key);
+    //         })
+    //         .attr("id", function(d) {
+    //             return d;
+    //         });
     // }
 
     bars.on('mouseover', function(d) {
@@ -255,7 +329,8 @@ function drawModule_genre()
     					// console.log(d);
     					// console.log(d.key);
     					// console.log(hover_colorScale(d.key));
-                		return hover_colorScale(d.key);
+                		// return hover_colorScale(d.key);
+                        return color_hover;
                 		// return "#AAA";
             		});
         })
@@ -286,7 +361,8 @@ function drawModule_genre()
             var nodeSelection = d3.select(this)
                 .transition().duration(trans_dur/4)
                 .style("fill", function(d) {
-                return colorScale(d.key);
+                // return colorScale(d.key);
+                return color_default;
             });
             
             // d3.select("#bars_tooltip").classed("hidden", true);
@@ -318,7 +394,8 @@ function drawModule_genre()
                 .on("end", function() {
                     d3.select(this)
                     .transition().duration(trans_dur/4)
-                    .style("fill", "#5E35B1");
+                    // .style("fill", "#5E35B1");
+                    .style("fill", color_click);
                 });
 
             // Outputting selection to console.
@@ -376,4 +453,54 @@ function init_genreTree(genreTree, genreArr)
 
 	console.log("Printing genreTree");
 	console.log(genreTree);
+}
+
+
+function update_genresDB(onlyFilters)
+{
+    var t_movieGenres;
+
+    // Non-filtered movies.
+    if (!onlyFilters)
+    {
+        movies.forEach(function (movie_elem) {
+            // console.log(d.genres.split("|"));
+            t_movieGenres = movie_elem.genres;
+            t_movieGenres.forEach(function (elem_genre) {
+                // if ([elem_genre] == "1 - September 11 (2002)\"")
+                // {
+                //     console.log("hello -- test");
+                //     console.log(d);
+                // }
+                if (!db_genres.hasOwnProperty([elem_genre]))
+                // if (db_genres[elem_genre] == null || db_genres <= 0)
+                {
+                    db_genres[elem_genre] = 1;
+                    db_genres.length++;
+                }
+                else
+                {
+                    db_genres[elem_genre]++;
+                }
+            })
+        });
+    }
+
+    // Filtered Movies
+    movies_filtered.forEach(function (movie_elem) {
+        // console.log(d.genres.split("|"));
+        t_movieGenres = movie_elem.genres;
+        t_movieGenres.forEach(function (elem_genre) {
+            if (!db_genres_filtered.hasOwnProperty([elem_genre]))
+            {
+                db_genres_filtered[elem_genre] = 1;
+                db_genres_filtered.length++;
+            }
+            else
+            {
+                db_genres_filtered[elem_genre]++;
+            }
+        })
+    });
+    
 }
