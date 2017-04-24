@@ -1,10 +1,13 @@
 /** Global Variables containing data **/
 // var movies;
 
-var selected_genre;
+// var selected_genre;
+var genVars;
 
 function drawModule_genre()
 {
+    genVars = [];
+
     var graphName = "byGenre";
     var trans_dur = 600;                // Transition Duration in Milliseconds.
     // var mod_width = 600;
@@ -25,6 +28,20 @@ function drawModule_genre()
 	var genreLocalMax = 0;
 	var genreArr = [];
 
+    // Updating Global Genre Variables List (for helper functions).
+    genVars.graphName       = graphName;
+    genVars.trans_dur       = trans_dur;
+    genVars.mod_width       = mod_width;
+    genVars.mod_height      = mod_height;
+    genVars.chart_width     = chart_width;
+    genVars.chart_height    = chart_height;
+    genVars.chart_Xoffset   = chart_Xoffset;
+    genVars.chart_Yoffset   = chart_Yoffset;
+    genVars.color_default   = color_default;
+    genVars.color_filtered  = color_filtered;
+    genVars.color_hover     = color_hover;
+    genVars.color_click     = color_click;
+
 
 	d3.select("#" + graphName)
         // .append("svg")
@@ -43,8 +60,8 @@ function drawModule_genre()
     console.log("Printing db_genres.");
     console.log(db_genres);
 
-    console.log("Printing db_genres length.");
-    console.log(db_genres.length);
+    // console.log("Printing db_genres length.");
+    // console.log(db_genres.length);
 
 
     // for (var property in mLens_genres)
@@ -95,6 +112,14 @@ function drawModule_genre()
         .range([chart_height, 0]).nice();
 
 
+    // More updating of global genre variables.
+    genVars.genreArr        = genreArr;
+    genVars.svg             = svg;
+    genVars.numGenres       = numGenres;
+    genVars.genreLocalMax   = genreLocalMax;
+    genVars.xScale          = xScale;
+    genVars.yScale          = yScale;
+
 
     var xAxis = d3.axisBottom();
     xAxis.scale(xScale);//.ticks(20);
@@ -132,11 +157,12 @@ function drawModule_genre()
     	.call(yAxis);
 
 
-    // Create the bars (hint: use #bars)
     var bars;
+    var bars_filtered;
 
-	    // bars = svg.append("g").selectAll("rect").data(d3.entries(db_genres));
-        bars = svg.select("#barsGenre").selectAll("rect").data(d3.entries(db_genres));
+        bars = svg.select("#barsGenre")
+            .selectAll("rect")
+            .data(d3.entries(db_genres));
 
 	    bars = bars.enter()
 	        .append("rect")
@@ -147,98 +173,28 @@ function drawModule_genre()
 	    bars.transition()
 	        .duration(100)
 	        .attr("x", function(d) {
-	            // return 58 + xScale("Action");
-	            // return 58 -(36/2) + xScale(genreElem);
-
-	            // console.log(d);
-
-	            // return 58 -(36/2) + xScale(d);
-	            // return 58 - (36/2) + xScale(d.key);
-	            // return chart_Xoffset - (chart_width/numGenres) + xScale(d.key);
 	            return chart_Xoffset + xScale(d.key);
 	        })
 	        .attr("y", function(d, i) {
-	            // return 2 + yScale(i/2);
-	            // return d.length;
-
-	            // console.log("iteration " + i + ",  val: " + d.value + ",  yScale: " + yScale(d.value));
-
-	            // return 2 + d.length;
-	            // console.log(i);
-	            // return yScale(2 + d.value);
 	            return chart_height + chart_Yoffset - yScale(d.value);
 	        })
 	        .attr("width", function (d) {
-	            // return (d.length/140);
 	            return (chart_width/numGenres)*9/10;
 	        })
 	        .attr("height", function (d) {
-	            // return 36;
 	            return yScale(d.value);
 	        })
 	        .style("fill", function(d) {
-	        	// console.log(colorScale(d.key));
-            	// return colorScale(d.key);
                 return color_default;
         	})
 	        .attr("id", function(d) {
 	        	return d;
 	        });
 
-    var bars_filtered;
-
     // if (filters.genre.length > 0)
-    // {
-    //     console.log("mLens_genres_filtered");
-    //     console.log(mLens_genres_filtered);
-    //     bars_filtered = svg.select("g").selectAll("rect").data(d3.entries(mLens_genres_filtered));
-
-    //     bars_filtered = bars_filtered.enter()
-    //         .append("rect")
-    //         .merge(bars_filtered);
-
-    //     bars_filtered.exit().remove();
-
-    //     bars_filtered.transition()
-    //         .duration(100)
-    //         .attr("x", function(d) {
-    //             // return 58 + xScale("Action");
-    //             // return 58 -(36/2) + xScale(genreElem);
-
-    //             // console.log(d);
-
-    //             // return 58 -(36/2) + xScale(d);
-    //             // return 58 - (36/2) + xScale(d.key);
-    //             // return chart_Xoffset - (chart_width/numGenres) + xScale(d.key);
-    //             return chart_Xoffset + xScale(d.key);
-    //         })
-    //         .attr("y", function(d, i) {
-    //             // return 2 + yScale(i/2);
-    //             // return d.length;
-
-    //             // console.log("iteration " + i + ",  val: " + d.value + ",  yScale: " + yScale(d.value));
-
-    //             // return 2 + d.length;
-    //             // console.log(i);
-    //             // return yScale(2 + d.value);
-    //             return chart_height + chart_Yoffset - yScale(d.value);
-    //         })
-    //         .attr("width", function (d) {
-    //             // return (d.length/140);
-    //             return (chart_width/numGenres)*9/10;
-    //         })
-    //         .attr("height", function (d) {
-    //             // return 36;
-    //             return yScale(d.value);
-    //         })
-    //         .style("fill", function(d) {
-    //             // console.log(colorScale(d.key));
-    //             return colorScale2(d.key);
-    //         })
-    //         .attr("id", function(d) {
-    //             return d;
-    //         });
-    // }
+    {
+        drawFilteredBars();
+    }
 
     bars.on('mouseover', function(d) {
             // No transition time on mouseover, to preserve responsiveness.
@@ -289,7 +245,7 @@ function drawModule_genre()
         // Log + Display selected bar data.
         .on('click', function(d) {
 
-        	selected_genre = d;
+        	// selected_genre = d;
 
             // Reset old 'selected' value.
             // d3.selectAll(".selected")
@@ -328,8 +284,10 @@ function drawModule_genre()
             console.log("---------");
 
             filters.num++;
-            filters.genre.push(selected_genre.key);
+            filters.genre.push(d.key);
             filter_movies();
+            update_genresDB(true);
+            drawFilteredBars();
         });
     
 
@@ -344,6 +302,72 @@ function drawModule_genre()
 
 }
 
+function drawFilteredBars()
+{
+    console.log("[drawFilteredBars]  ");
+    console.log("db_genres: ");
+    console.log(db_genres);
+    console.log("db_genres_filtered: ");
+    console.log(db_genres_filtered);
+
+    if (filters.genre.length <= 0)
+    {
+        bars_filtered = genVars.svg.select("#barsGenre_filtered")
+            .selectAll("rect")
+            .data(d3.entries(emptyGenreArray()));
+    }
+    else
+    {
+        bars_filtered = genVars.svg.select("#barsGenre_filtered")
+            .selectAll("rect")
+            .data(d3.entries(db_genres_filtered));
+    }
+
+
+    bars_filtered = bars_filtered.enter()
+        .append("rect")
+        .merge(bars_filtered);
+
+    bars_filtered.exit().remove();
+
+    bars_filtered.transition()
+        .duration(100)
+        .attr("x", function(d) {
+            return genVars.chart_Xoffset + genVars.xScale(d.key);
+        })
+        .attr("y", function(d, i) {
+            return genVars.chart_height + genVars.chart_Yoffset - genVars.yScale(d.value);
+        })
+        .attr("width", function (d) {
+            return (genVars.chart_width/genVars.numGenres)*9/10;
+        })
+        .attr("height", function (d) {
+            return genVars.yScale(d.value);
+        })
+        .style("fill", function(d) {
+            return genVars.color_filtered;
+            // return "#222";
+        })
+        .attr("id", function(d) {
+            return d;
+        });
+}
+
+
+function emptyGenreArray()
+{
+    var emptyArr = [];
+
+    genVars.genreArr.forEach(function (genre_val) {
+        if (!emptyArr.hasOwnProperty([genre_val]))
+        {
+            emptyArr[genre_val] = 0;
+        }
+    });
+
+    return emptyArr;
+}
+
 
 
 function update_genresDB(onlyFilters)
@@ -353,6 +377,9 @@ function update_genresDB(onlyFilters)
     // Non-filtered movies.
     if (!onlyFilters)
     {
+        db_genres = [];
+        db_genres_filtered = [];
+
         movies.forEach(function (movie_elem) {
             // console.log(d.genres.split("|"));
             t_movieGenres = movie_elem.genres;
@@ -366,7 +393,7 @@ function update_genresDB(onlyFilters)
                 // if (db_genres[elem_genre] == null || db_genres <= 0)
                 {
                     db_genres[elem_genre] = 1;
-                    db_genres.length++;
+                    // db_genres.length++;
                 }
                 else
                 {
@@ -374,6 +401,10 @@ function update_genresDB(onlyFilters)
                 }
             })
         });
+    }
+    else
+    {
+        db_genres_filtered = emptyGenreArray();
     }
 
     // Filtered Movies
@@ -384,7 +415,6 @@ function update_genresDB(onlyFilters)
             if (!db_genres_filtered.hasOwnProperty([elem_genre]))
             {
                 db_genres_filtered[elem_genre] = 1;
-                db_genres_filtered.length++;
             }
             else
             {
