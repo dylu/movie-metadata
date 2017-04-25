@@ -20,9 +20,10 @@ function drawModule_genre()
     update_genresDB(false);
 
     var color_default   = '#42A5F5';    // Blue     400
-    var color_filtered  = '#5C6BC0';    // Indigo   400
     var color_hover     = '#4FC3F7';    // L. Blue  300
-    var color_click     = '#7E57C2';    // D. Purp  400
+    var color_filtered  = '#5C6BC0';    // Indigo   400
+    var color_f_hover   = '#7986CB';    // Indigo   300
+    var color_click     = '#1E88E5';    // Blue     600
     
     var numGenres = 0;
 	var genreLocalMax = 0;
@@ -38,8 +39,9 @@ function drawModule_genre()
     genVars.chart_Xoffset   = chart_Xoffset;
     genVars.chart_Yoffset   = chart_Yoffset;
     genVars.color_default   = color_default;
-    genVars.color_filtered  = color_filtered;
     genVars.color_hover     = color_hover;
+    genVars.color_filtered  = color_filtered;
+    genVars.color_f_hover   = color_f_hover;
     genVars.color_click     = color_click;
 
 
@@ -336,7 +338,8 @@ function drawFiltered_genre()
 
     bars_filtered = bars_filtered.enter()
         .append("rect")
-        .merge(bars_filtered);
+        .merge(bars_filtered)
+        .classed("clickThrough", true);
 
     bars_filtered.exit().remove();
 
