@@ -13,3 +13,8 @@ function execute_control()
 	drawModule_genre();
 	drawModule_month();
 }
+
+function redrawFiltered()
+{
+	drawFiltered_genre();
+}

@@ -14,8 +14,9 @@ function load_data()
     movies = [];
     filters = new Object();
     filters.num = 0;
-    filters.genre = [];
-    filters.month = [];
+    filters.genre = new Set();
+    // filters.genre = [];
+    filters.month = new Set();
     // filters.year = [];
 
     db_genres = [];
@@ -201,13 +202,17 @@ function filter_movies()
         movies_filtered = movies.filter(applyFilters);
 
 
-        filterDebugStr = filters.genre[0];
-        for (i = 1; i < filters.genre.length; i++)
-        {
-            filterDebugStr += (", " + filters.genre[i]);
-        }
+        // filterDebugStr = filters.genre[0];
+        // for (i = 1; i < filters.genre.length; i++)
+        // {
+        //     filterDebugStr += (", " + filters.genre[i]);
+        // }
+        filterDebugStr = "";
+        filters.genre.forEach(function(filterVal) {
+            filterDebugStr += (filterVal + " | ");
+        });
     }
-    
+    filterDebugStr = filterDebugStr.substring(0, filterDebugStr.length-3);
 
 
     console.log("Filter:  Genres [" + filterDebugStr + "]");
@@ -229,9 +234,10 @@ function applyFilters(movElem)
         return true;
     }
 
-    // var passFlag = true;
+    var passFlag = true;
 
-    if (filters.genre.length > 0)
+    if (filters.genre.size > 0)
+    // if (filters.genre.length > 0)
     {
 
         // filters.genre.forEach(function (genre) {
@@ -241,18 +247,27 @@ function applyFilters(movElem)
             //     console.log("no, " + movElem.id);
             //     return false;
             // }
-        for (i = 0; i < filters.genre.length; i++)
-        {
-            if (!movElem.genres.includes(filters.genre[i]))
+
+        // for (i = 0; i < filters.genre.size; i++)
+        // // for (i = 0; i < filters.genre.length; i++)
+        // {
+        //     if (!movElem.genres.includes(Array.from(filters.genre)[i]))
+        //     {
+        //         return false;
+        //     }
+        // }
+
+        filters.genre.forEach(function(filterVal) {
+            if (!movElem.genres.includes(filterVal))
             {
-                return false;
+                passFlag = false;
             }
-        }
+        });
             
         // });
     }
 
-    return true;
+    return passFlag;
 }
 
 

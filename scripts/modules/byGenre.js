@@ -193,7 +193,7 @@ function drawModule_genre()
 
     // if (filters.genre.length > 0)
     {
-        drawFilteredBars();
+        drawFiltered_genre();
     }
 
     bars.on('mouseover', function(d) {
@@ -284,10 +284,12 @@ function drawModule_genre()
             console.log("---------");
 
             filters.num++;
-            filters.genre.push(d.key);
+            filters.genre.add(d.key);
+            // filters.genre.push(d.key);
             filter_movies();
             update_genresDB(true);
-            drawFilteredBars();
+
+            redrawFiltered();
         });
     
 
@@ -302,15 +304,21 @@ function drawModule_genre()
 
 }
 
-function drawFilteredBars()
+function drawFiltered_genre()
 {
-    console.log("[drawFilteredBars]  ");
+    console.log("[drawFiltered_genre]  ");
     console.log("db_genres: ");
     console.log(db_genres);
     console.log("db_genres_filtered: ");
     console.log(db_genres_filtered);
 
-    if (filters.genre.length <= 0)
+    // console.log("movies: ");
+    // console.log(movies);
+    // console.log("movies_filtered: ");
+    // console.log(movies_filtered);
+
+    if (filters.genre.size <= 0)
+    // if (filters.genre.length <= 0)
     {
         bars_filtered = genVars.svg.select("#barsGenre_filtered")
             .selectAll("rect")
@@ -373,6 +381,7 @@ function emptyGenreArray()
 function update_genresDB(onlyFilters)
 {
     var t_movieGenres;
+    db_genres_filtered = [];
 
     // Non-filtered movies.
     if (!onlyFilters)
@@ -407,6 +416,10 @@ function update_genresDB(onlyFilters)
         db_genres_filtered = emptyGenreArray();
     }
 
+    console.log("LENGTHS ");
+    console.log(movies.length);
+    console.log(movies_filtered.length);
+
     // Filtered Movies
     movies_filtered.forEach(function (movie_elem) {
         // console.log(d.genres.split("|"));
@@ -414,6 +427,8 @@ function update_genresDB(onlyFilters)
         t_movieGenres.forEach(function (elem_genre) {
             if (!db_genres_filtered.hasOwnProperty([elem_genre]))
             {
+                // console.log("uuuugh");
+                // console.log(elem_genre);
                 db_genres_filtered[elem_genre] = 1;
             }
             else
