@@ -10,3 +10,10 @@ data/preprocess/RemoteSystemsTempFiles
 *.zip
 *.gz
 *.list
+
+
+#docs
+*.doc
+*.docx
+*.tmp
+
