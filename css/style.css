@@ -101,3 +101,9 @@ body
     color: #222; /* Text color */
     background-color: #DADADA;
 }
+
+
+.noDisplay
+{
+    display:none;
+}

@@ -14,6 +14,19 @@ function execute_control()
 	drawModule_month();
 }
 
+function updateFiltered()
+{
+	filter_movies();
+
+	updateDBs();
+    redrawFiltered();
+}
+
+function updateDBs()
+{
+    update_genresDB(true);
+}
+
 function redrawFiltered()
 {
 	drawFiltered_genre();

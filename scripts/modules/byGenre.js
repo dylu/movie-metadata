@@ -284,12 +284,14 @@ function drawModule_genre()
             console.log("---------");
 
             filters.num++;
-            filters.genre.add(d.key);
-            // filters.genre.push(d.key);
-            filter_movies();
-            update_genresDB(true);
+            if (!filters.genre.has(d.key))
+            {
+                filters.genre.add(d.key);
+                // filters.genre.push(d.key);
+                newButton("genre:"+d.key);
 
-            redrawFiltered();
+                updateFiltered();
+            }
         });
     
 
