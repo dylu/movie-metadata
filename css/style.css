@@ -91,6 +91,11 @@ body
     border: solid #BBB 0.1em;
 }
 
+#filterButtons button:after
+{
+    content: '  x';
+}
+
 #filterButtons button:hover
 {
     color: #222; /* Text color */
