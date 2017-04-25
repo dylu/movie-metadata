@@ -43,7 +43,8 @@ body
 #header
 {
     /* T R B L */
-    margin: 1em 2em ;
+    margin: 1.6em 2em ;
+    text-align: center;
 }
 
 .d3_module
@@ -67,7 +68,7 @@ body
     background-color: #F6F6F6;
 
     /* T R B L */
-    margin: 2em 4em 2.4em 4.2em;
+    margin: 3.2em 4em 1.2em 4.2em;
     padding: 2em 1em 1.6em 2.4em;
 }
 
@@ -92,21 +93,23 @@ body
     border-radius: 0.32em;
 }
 
-/*#filterButtons button:after
+/*#filterButtons button:enabled:after
 {
     content: '  x';
 }*/
 
-#filterButtons button:hover
+#filterButtons button:hover:enabled
 {
-    color: #222; /* Text color */
-    background-color: #DADADA;
+    color: #1A1A1A; /* Text color */
+    background-color: #E4E4E4;
+    border: solid #AEAEAE 0.1em;
 }
 
 #allButton
 {
     opacity: 0.9;
-    cursor: not-allowed;
+    color: #666;
+    /*cursor: not-allowed;*/
 }
 
 
