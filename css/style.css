@@ -49,6 +49,7 @@ body
 .d3_module
 {
     margin: 2em 2em 3.6em 4.2em;
+    /*padding: 2em 2em 3.6em 4.2em;*/
     /*background-color: #EEE;*/
 }
 
@@ -57,3 +58,41 @@ body
     background-color: #F6F6F6;
 }
 
+
+
+/* Filters */
+
+#filterButtons
+{
+    background-color: #F6F6F6;
+
+    /* T R B L */
+    margin: 2em 4em 2.4em 4.2em;
+    padding: 2em 1em 1.6em 2.4em;
+}
+
+#filterTitle
+{
+    font-size: 3.6em;
+    /*font-family: */
+}
+
+#filterButtons button
+{
+    /* Button Text Styling */
+    color: #222;
+    font-size: 2.4em;
+    /*font-family: ;*/
+
+    /* Button Color Styling */
+    background-color: #EEE;
+    padding: 0.2em 0.6em 0.2em 0.6em;
+    margin: 0.02em 0.1em 0.02em 0.2em;
+    border: solid #BBB 0.1em;
+}
+
+#filterButtons button:hover
+{
+    color: #222; /* Text color */
+    background-color: #DADADA;
+}
