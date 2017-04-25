@@ -25,9 +25,11 @@ function updateFiltered()
 function updateDBs()
 {
     update_genresDB(true);
+    update_monthDB();
 }
 
 function redrawFiltered()
 {
 	drawFiltered_genre();
+	drawFiltered_month();
 }

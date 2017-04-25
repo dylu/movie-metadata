@@ -2,10 +2,16 @@
 // var movies;
 
 // var selected_genre;
+var db_genres;
+var db_genres_filtered;
+
 var genVars;
 
 function drawModule_genre()
 {
+    db_genres = [];
+    db_genres_filtered = [];
+
     genVars = [];
 
     var graphName = "byGenre";
@@ -46,16 +52,9 @@ function drawModule_genre()
 
 
 	d3.select("#" + graphName)
-        // .append("svg")
         .select("svg")
         .attr("width", mod_width)
         .attr("height", mod_height);
-        // .append("g");
-
-        // .append("rect")
-        // .attr("x", 0)
-        // .attr("y", 0)
-        // .
 
 
 
@@ -173,17 +172,17 @@ function drawModule_genre()
 	    bars.exit().remove();
 
 	    bars.transition()
-	        .duration(100)
+	        .duration(trans_dur/6)
 	        .attr("x", function(d) {
 	            return chart_Xoffset + xScale(d.key);
 	        })
 	        .attr("y", function(d, i) {
 	            return chart_height + chart_Yoffset - yScale(d.value);
 	        })
-	        .attr("width", function (d) {
+	        .attr("width", function(d) {
 	            return (chart_width/numGenres)*9/10;
 	        })
-	        .attr("height", function (d) {
+	        .attr("height", function(d) {
 	            return yScale(d.value);
 	        })
 	        .style("fill", function(d) {
@@ -203,35 +202,8 @@ function drawModule_genre()
             var nodeSelection = 
             	d3.select(this)
                 	.style("fill", function(d) {
-    					// console.log(d);
-    					// console.log(d.key);
-    					// console.log(hover_colorScale(d.key));
-                		// return hover_colorScale(d.key);
                         return color_hover;
-                		// return "#AAA";
             		});
-        })
-        // Tooltip follows mouse.
-        .on('mousemove', function(d) {
-            // var curr_loc = d3.mouse(this);
-
-            // // fine tuning
-            // // var xAdj = 20 + detailsXOffset;
-            // // var yAdj = 32 + headerOffset;
-            // var xAdj = -120;
-            // var yAdj = 22;
-            
-            // var tt = d3.select("#bars_tooltip")
-            //     .style("left", (curr_loc[0] + xAdj) + "px")
-            //     .style("top", (curr_loc[1] + yAdj) + "px");
-
-            // tt.select("#title")
-            //     .text(capitalize([selectedDimension].toString()) + 
-            //         " " + d.year + ":");
-            // tt.select("#value")
-            //     .text(d[selectedDimension]);
-
-            // tt.classed("hidden", false);
         })
         // Original bar color restored.
         .on('mouseout', function(d) {
@@ -244,24 +216,8 @@ function drawModule_genre()
             
             // d3.select("#bars_tooltip").classed("hidden", true);
         })
-        // Log + Display selected bar data.
+        // New Filters.
         .on('click', function(d) {
-
-        	// selected_genre = d;
-
-            // Reset old 'selected' value.
-            // d3.selectAll(".selected")
-            //     .transition()
-            //     .duration(trans_dur/4)
-            //     .style("fill", function(d) {
-            //         return colorScale(d[selectedDimension]);
-            //     });
-            // d3.selectAll(".selected").classed("selected", false);
-
-            // // selectedYear = d.year;
-            // updateInfo(d);
-            // clearMap();
-            // updateMap(d);
 
             var nodeSelection = d3.select(this);
 
@@ -297,24 +253,15 @@ function drawModule_genre()
         });
     
 
-    // Color is separate, to prevent selecting a new chart from overriding current selection.
-    // bars.filter(function(d, i) {
-    //                 // Filtering 'selected' value to not change.
-    //                 return (!d3.select(this).classed("selected"));
-    //     })
-    //     .style("fill", function(d) {
-    //         return colorScale(d[selectedDimension]);
-    //     });
-
 }
 
 function drawFiltered_genre()
 {
-    console.log("[drawFiltered_genre]  ");
-    console.log("db_genres: ");
-    console.log(db_genres);
-    console.log("db_genres_filtered: ");
-    console.log(db_genres_filtered);
+    // console.log("[drawFiltered_genre]  ");
+    // console.log("db_genres: ");
+    // console.log(db_genres);
+    // console.log("db_genres_filtered: ");
+    // console.log(db_genres_filtered);
 
     // console.log("movies: ");
     // console.log(movies);

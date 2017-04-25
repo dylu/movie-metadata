@@ -4,8 +4,6 @@ var movies_filtered;
 var filters;
 // var mLens_links;
 
-var db_genres;
-var db_genres_filtered;
 
 
 function load_data()
@@ -18,9 +16,6 @@ function load_data()
     // filters.genre = [];
     filters.month = new Set();
     // filters.year = [];
-
-    db_genres = [];
-    db_genres_filtered = [];
 
 
     console.log(".[dataloader.load_data] \n - Calling MovieData");
