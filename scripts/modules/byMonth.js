@@ -430,6 +430,157 @@ function drawFiltered_month()
             .attr("id", function(d) {
                 return "month:" + d.monthName;
             });
+
+
+    var ratingLine = d3.line()
+        .x(function(d, i){
+            return monVars.chart_Xoffset + (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+                monVars.xScale(monthNames[i]);
+        })
+        .y(function(d, i){
+            // console.log("Hello");
+            // console.log(monVars.xScale(monthNames[i]));
+            // console.log(monVars.yScaleR(d.totalRating / d.movieIds.length));
+            return monVars.chart_height + monVars.chart_Yoffset - 
+                    monVars.yScaleR(d.totalRating / d.movieIds.length);
+        });
+
+
+    // var t_oldX = 0;
+    // var t_oldY = 0;
+
+    var lines_filtered;
+
+        lines_filtered = monVars.svg.select("#lineMonth_filtered")
+            .selectAll("line")
+            .data(db_month_filtered);
+
+        lines_filtered = lines_filtered.enter()
+            .append("line")
+            .merge(lines_filtered);
+
+        lines_filtered.exit().remove();
+
+        lines_filtered.transition()
+            .duration(monVars.trans_dur/6)
+            .attr("x1", function(d, i) {
+                if (i == 0)
+                {
+                    return monVars.chart_Xoffset + 
+                            (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+                            monVars.xScale(monthNames[i]);
+                    // return t_oldX;
+                }
+                else
+                {
+                    // return t_oldX;
+                    return monVars.chart_Xoffset + 
+                            (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+                            monVars.xScale(monthNames[i-1]);
+                }
+            })
+            .attr("y1", function(d, i) {
+                if (i == 0)
+                {
+                    t_oldY = monVars.chart_height + monVars.chart_Yoffset - 
+                            monVars.yScaleR(d.totalRating / d.movieIds.length);
+
+                    return t_oldY;
+                }
+                else
+                {
+                    // return t_oldY;
+                    return monVars.chart_height + monVars.chart_Yoffset - 
+                            monVars.yScaleR(db_month_filtered[i-1].totalRating / db_month_filtered[i-1].movieIds.length);
+                }
+            })
+            .attr("x2", function(d, i) {
+                return monVars.chart_Xoffset + 
+                        (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+                        monVars.xScale(monthNames[i]);
+
+                // return t_oldX;
+            })
+            .attr("y2", function(d, i) {
+                return monVars.chart_height + monVars.chart_Yoffset - 
+                        monVars.yScaleR(d.totalRating / d.movieIds.length);
+                
+                // return t_oldY;
+            })
+            .attr("stroke", "black");
+
+        // lines_filtered = monVars.svg.select("#lineMonth_filtered")
+        //     .selectAll("path")
+        //     .data(db_month_filtered);
+
+      //       .append("path")
+      //       .datum(db_month_filtered)
+      //       .attr("fill", "none")
+      // .attr("stroke", "steelblue")
+      // .attr("stroke-linejoin", "round")
+      // .attr("stroke-linecap", "round")
+      // .attr("stroke-width", 1.5)
+      // .attr("d", ratingLine);
+
+            // .data(db_month_filtered);
+            // .data(ratingLine(db_month_filtered));
+
+        // lines_filtered = lines_filtered.enter()
+        //     .append("path")
+        //     .merge(lines_filtered)
+        //     // ;
+        //     .attr("class", "line")
+        //     .attr("d", ratingLine);
+
+        // lines_filtered = monVars.svg.select("#lineMonth_filtered");
+
+        // lines_filtered
+        //     .select("path")
+        //     // .remove();
+
+        // // lines_filtered
+        //     // .selectAll("path")
+        //     .datum(db_month_filtered)
+        //     // .enter()
+        //     // .append("path")
+        //     // .
+
+        //     .attr("stroke", "steelblue")
+        //     .attr("stroke-linejoin", "round")
+        //     .attr("stroke-linecap", "round")
+        //     .attr("stroke-width", 1.5)
+
+        //     .attr("class", "line")
+        //     .attr("d", ratingLine);
+
+        // // console.log("HELLO")
+        // // console.log(ratingLine(db_month_filtered));
+
+        // lines_filtered
+        //     .transition()
+        //     .duration(monVars.trans_dur/6);
+        
+        // lines_filtered.exit().remove();
+
+        // lines_filtered
+            
+            // .transition()
+            // .duration(monVars.trans_dur/6)
+
+            // .attr("d", function(d) {
+            //     return ratingLine(d);
+            // });
+
+            // .attr("d", ratingLine(db_month_filtered));
+
+            // .datum(db_month_filtered)
+
+
+            // .attr("class", "line")
+            // .attr("d", ratingLine);
+
+            // .attr("d", ratingLine);
+
 }
 
 
