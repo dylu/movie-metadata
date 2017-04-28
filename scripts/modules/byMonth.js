@@ -376,6 +376,8 @@ function redrawAxes_month()
         .call(monVars.xAxis);
 
     monVars.svg.select("#yAxisMonthL")
+        .transition()
+        .duration(monVars.trans_dur*2)
         .attr("transform", "translate(" + monVars.chart_Xoffset + ", " + 
             monVars.chart_Yoffset + ")")
         .call(monVars.yAxisL);
