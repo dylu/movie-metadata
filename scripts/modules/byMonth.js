@@ -150,18 +150,7 @@ function drawModule_month()
     monVars.yAxisR              = yAxisR;
 
 
-    svg.select("#xAxisMonth")
-        .attr("transform", "translate(" + chart_Xoffset + ", " + (chart_height + chart_Yoffset) + ")")
-        .call(xAxis);
-
-    svg.select("#yAxisMonthL")
-        .attr("transform", "translate(" + chart_Xoffset + ", " + chart_Yoffset + ")")
-        .call(yAxisL);
-
-    svg.select("#yAxisMonthR")
-        .attr("transform", "translate(" + (chart_Xoffset + chart_width) + ", " + chart_Yoffset + ")")
-        .call(yAxisR);
-
+    redrawAxes_month();
 
     drawFiltered_month();
 
@@ -341,6 +330,60 @@ function drawModule_month()
     //         return colorScale(d[selectedDimension]);
     //     });
 
+}
+
+function recalculateAxes_month()
+{
+    var t_monthAvgLocalMax = 0;
+    var t_monthNumLocalMax = 0;
+    var t_num = 0;
+    var t_avg = 0;
+
+    for (i = 0; i < monVars.numMonths; i++)
+    {
+        t_num = db_month_filtered[i].movieIds.length;
+        t_avg = db_month_filtered[i].totalRating / t_num;
+
+        t_monthNumLocalMax = Math.max(t_monthNumLocalMax, t_num);
+        t_monthAvgLocalMax = Math.max(t_monthAvgLocalMax, t_avg);
+    }
+
+
+    monVars.monthNumLocalMax = t_monthNumLocalMax;
+    monVars.monthAvgLocalMax = t_monthAvgLocalMax;
+
+    monVars.yScaleL = d3.scaleLinear()
+        .domain([0, t_monthNumLocalMax])
+        .range([0, monVars.chart_height]).nice();
+
+    monVars.yScaleAxisL = d3.scaleLinear()
+        .domain([0, t_monthNumLocalMax])
+        .range([monVars.chart_height, 0]).nice();
+
+    // monVars.yAxisL = d3.axisLeft();
+    monVars.yAxisL.scale(monVars.yScaleAxisL);
+
+    // monVars.yAxisR = d3.axisRight();
+    // monVars.yAxisR.scale(yScaleAxisR);
+
+}
+
+function redrawAxes_month()
+{
+    monVars.svg.select("#xAxisMonth")
+        .attr("transform", "translate(" + monVars.chart_Xoffset + ", " + 
+            (monVars.chart_height + monVars.chart_Yoffset) + ")")
+        .call(monVars.xAxis);
+
+    monVars.svg.select("#yAxisMonthL")
+        .attr("transform", "translate(" + monVars.chart_Xoffset + ", " + 
+            monVars.chart_Yoffset + ")")
+        .call(monVars.yAxisL);
+
+    monVars.svg.select("#yAxisMonthR")
+        .attr("transform", "translate(" + (monVars.chart_Xoffset + monVars.chart_width) + 
+            ", " + monVars.chart_Yoffset + ")")
+        .call(monVars.yAxisR);
 }
 
 function drawFiltered_month()

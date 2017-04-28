@@ -31,5 +31,8 @@ function updateDBs()
 function redrawFiltered()
 {
 	drawFiltered_genre();
+
+	recalculateAxes_month();
+	redrawAxes_month();
 	drawFiltered_month();
 }
