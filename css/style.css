@@ -40,6 +40,30 @@ body
     background-color: #EAEAEA;
 }
 
+
+/* Table Stuff */
+table
+{
+    font-size: 2em;
+    border-collapse: collapse;
+}
+
+th
+{
+    background-color: #FAFAFA;
+}
+
+tr:nth-child(even)
+{
+    background-color: #F4F4F4
+}
+
+tr:hover
+{
+    background-color: #F6F6F6
+}
+
+
 #header
 {
     /* T R B L */
