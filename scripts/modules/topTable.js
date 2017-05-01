@@ -88,11 +88,12 @@ function redrawFiltered_table()
 function update_tableDB()
 {
 	var MOVIE_LIMIT = 20;
-	var MINIMUM_VOTES = 10000;
+	var MINIMUM_VOTES = 10000 * 10;
 
 	db_table_filtered = [];
 
-	var yearRegex = /\s\(\d{4}-*–*\)/;
+	var rmYearRegex = /\s\(\d{4}-*–*\)/;
+	var matchYearRegex = /\d{4}/;
 
 
 	function ratingSort(mov1, mov2)
@@ -101,24 +102,31 @@ function update_tableDB()
 	}
 
 	// Filtered Movies
-    movies_filtered.forEach(function(movie)
-    {
-    	t_movObj = new Object();
+    // movies_filtered.forEach(function(movie)
+    // {
+    // 	t_movObj = new Object();
 
-    	t_movObj.title 		= movie.title.replace(yearRegex, "");
-        // t_movObj.rating 	= movie.ratingAvg;
-        // t_movObj.ratingNum 	= movie.ratingNum;
-        t_movObj.rating 	= movie.imdbRatingAvg;
-        t_movObj.ratingNum 	= movie.imdbRatingNum;
-        t_movObj.year 		= movie.releaseYear;
-        t_movObj.imdbId 	= movie.imdbID;
+    // 	t_movObj.title 		= movie.title.replace(rmYearRegex, "");
+    //     // t_movObj.rating 	= movie.ratingAvg;
+    //     // t_movObj.ratingNum 	= movie.ratingNum;
+    //     t_movObj.rating 	= movie.imdbRatingAvg;
+    //     t_movObj.ratingNum 	= movie.imdbRatingNum;
+    //     t_movObj.year 		= movie.releaseYear;
 
-        if (t_movObj.ratingNum > MINIMUM_VOTES)
-    	{
-    		db_table_filtered.push(t_movObj);
-    	}
+    //     if (t_movObj.year.length != 4 ||
+    //     	matchYearRegex.test(t_movObj.year))
+    //     {
+    //     	t_movObj.year 	= "Unavailable";
+    //     }
 
-    });
+    //     t_movObj.imdbId 	= movie.imdbID;
+
+    //     if (t_movObj.ratingNum > MINIMUM_VOTES)
+    // 	{
+    // 		db_table_filtered.push(t_movObj);
+    // 	}
+
+    // });
 
 
 	while (db_table_filtered.length < movies_filtered.length/1000)
@@ -133,12 +141,19 @@ function update_tableDB()
 	    {
 	    	t_movObj = new Object();
 
-	    	t_movObj.title 		= movie.title.replace(yearRegex, "");
+	    	t_movObj.title 		= movie.title.replace(rmYearRegex, "");
 	        // t_movObj.rating 	= movie.ratingAvg;
 	        // t_movObj.ratingNum 	= movie.ratingNum;
 	        t_movObj.rating 	= movie.imdbRatingAvg;
 	        t_movObj.ratingNum 	= movie.imdbRatingNum;
 	        t_movObj.year 		= movie.releaseYear;
+	        
+	        if (t_movObj.year.length != 4 ||
+        		!matchYearRegex.test(t_movObj.year))
+	        {
+	        	t_movObj.year 	= "N/A";
+	        }
+
 	        t_movObj.imdbId 	= movie.imdbID;
 
 	        if (t_movObj.ratingNum > MINIMUM_VOTES)
