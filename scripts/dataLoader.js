@@ -212,8 +212,8 @@ function filter_movies()
 
     console.log("Filter:  Genres [" + filterDebugStr + "]");
     console.log(" -- ");
-    // console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
-    // console.log(movies_filtered);
+    console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
+    console.log(movies_filtered);
 
     console.log(".[dataloader.filter_movies] \n - Printing sizes");
     console.log("  movies num: " + movies.length);

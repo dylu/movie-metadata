@@ -482,6 +482,7 @@ function drawFiltered_month()
             .attr("y1", function(d, i) {
                 if (i == 0)
                 {
+                    // if (d.movieIds.length )
                     t_oldY = monVars.chart_height + monVars.chart_Yoffset - 
                             monVars.yScaleR(d.totalRating / d.movieIds.length);
 

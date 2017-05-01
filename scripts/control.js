@@ -12,6 +12,7 @@ function execute_control()
 
 	drawModule_genre();
 	drawModule_month();
+	drawModule_table();
 }
 
 function updateFiltered()
