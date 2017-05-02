@@ -483,9 +483,9 @@ function drawFiltered_month()
             console.log("---------");
             console.log(d);
 
-            filters.num++;
             if (!filters.month.has(d.monthName))
             {
+                filters.num++;
                 filters.month.add(d.monthName);
                 // filters.month.push(d.key);
                 newButton("month:"+d.monthName);

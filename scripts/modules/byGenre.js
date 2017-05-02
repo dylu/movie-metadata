@@ -241,9 +241,9 @@ function drawModule_genre()
             console.log("--CLICK--");
             console.log("---------");
 
-            filters.num++;
             if (!filters.genre.has(d.key))
             {
+                filters.num++;
                 filters.genre.add(d.key);
                 // filters.genre.push(d.key);
                 newButton("genre:"+d.key);
@@ -268,7 +268,7 @@ function drawFiltered_genre()
     // console.log("movies_filtered: ");
     // console.log(movies_filtered);
 
-    if (filters.genre.size <= 0)
+    if (filters.num <= 0)
     // if (filters.genre.length <= 0)
     {
         bars_filtered = genVars.svg.select("#barsGenre_filtered")
