@@ -262,6 +262,16 @@ function applyFilters(movElem)
         // });
     }
 
+    if (filters.month.size > 0)
+    {
+        filters.month.forEach(function(filterVal) {
+            if (!movElem.releaseMonth.includes(filterVal))
+            {
+                passFlag = false;
+            }
+        });
+    }
+
     return passFlag;
 }
 

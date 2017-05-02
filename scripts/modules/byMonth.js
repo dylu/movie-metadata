@@ -23,12 +23,19 @@ function drawModule_month()
     var graphName = "byMonth";
     var trans_dur = 600;                // Transition Duration in Milliseconds.
     // var mod_width = 600;
-    var mod_width = 1000;
-    var mod_height = 500;
-    var chart_width = 900;
-    var chart_height = 400;
-    var chart_Xoffset = 60;
-    var chart_Yoffset = 40;
+
+    // var mod_width = 1000;
+    // var mod_height = 500;
+    // var chart_width = 900;
+    // var chart_height = 400;
+
+    var mod_width = 560;
+    var mod_height = 360;
+    var chart_width = 480;
+    var chart_height = 300;
+
+    var chart_Xoffset = 46;
+    var chart_Yoffset = 26;
     // update_genresDB(false);
 
     var color_default   = '#42A5F5';    // Blue     400
@@ -431,84 +438,139 @@ function drawFiltered_month()
                 return "month:" + d.monthName;
             });
 
-
-    var ratingLine = d3.line()
-        .x(function(d, i){
-            return monVars.chart_Xoffset + (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
-                monVars.xScale(monthNames[i]);
+    bars_filtered.on('mouseover', function(d) {
+            // No transition time on mouseover, to preserve responsiveness.
+            var nodeSelection = 
+                d3.select(this)
+                    .style("fill", function(d) {
+                        return monVars.color_hover;
+                    });
         })
-        .y(function(d, i){
-            // console.log("Hello");
-            // console.log(monVars.xScale(monthNames[i]));
-            // console.log(monVars.yScaleR(d.totalRating / d.movieIds.length));
-            return monVars.chart_height + monVars.chart_Yoffset - 
-                    monVars.yScaleR(d.totalRating / d.movieIds.length);
+        // Original bar color restored.
+        .on('mouseout', function(d) {
+            var nodeSelection = d3.select(this)
+                .transition().duration(monVars.trans_dur/4)
+                .style("fill", function(d) {
+                // return colorScale(d.key);
+                return monVars.color_default;
+            });
+            
+            // d3.select("#bars_tooltip").classed("hidden", true);
+        })
+        // New Filters.
+        .on('click', function(d) {
+
+            var nodeSelection = d3.select(this);
+
+            nodeSelection
+                .transition().duration(monVars.trans_dur/16)
+                .style("fill", "#CCC")
+                .on("end", function() {
+                    d3.select(this)
+                    .transition().duration(monVars.trans_dur/4)
+                    // .style("fill", "#5E35B1");
+                    .style("fill", monVars.color_click);
+                });
+
+            // Outputting selection to console.
+            // console.log("Selected the " + d.year + " value for " + 
+            //     [selectedDimension] + ", " + d[selectedDimension]);
+
+            // console.log(selected_genre);
+
+            console.log("---------");
+            console.log("--CLICK--");
+            console.log("---------");
+            console.log(d);
+
+            filters.num++;
+            if (!filters.month.has(d.monthName))
+            {
+                filters.month.add(d.monthName);
+                // filters.month.push(d.key);
+                newButton("month:"+d.monthName);
+
+                updateFiltered();
+            }
         });
 
+    // var ratingLine = d3.line()
+    //     .x(function(d, i){
+    //         return monVars.chart_Xoffset + (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+    //             monVars.xScale(monthNames[i]);
+    //     })
+    //     .y(function(d, i){
+    //         // console.log("Hello");
+    //         // console.log(monVars.xScale(monthNames[i]));
+    //         // console.log(monVars.yScaleR(d.totalRating / d.movieIds.length));
+    //         return monVars.chart_height + monVars.chart_Yoffset - 
+    //                 monVars.yScaleR(d.totalRating / d.movieIds.length);
+    //     });
 
-    // var t_oldX = 0;
-    // var t_oldY = 0;
 
-    var lines_filtered;
+    // // var t_oldX = 0;
+    // // var t_oldY = 0;
 
-        lines_filtered = monVars.svg.select("#lineMonth_filtered")
-            .selectAll("line")
-            .data(db_month_filtered);
+    // var lines_filtered;
 
-        lines_filtered = lines_filtered.enter()
-            .append("line")
-            .merge(lines_filtered);
+    //     lines_filtered = monVars.svg.select("#lineMonth_filtered")
+    //         .selectAll("line")
+    //         .data(db_month_filtered);
 
-        lines_filtered.exit().remove();
+    //     lines_filtered = lines_filtered.enter()
+    //         .append("line")
+    //         .merge(lines_filtered);
 
-        lines_filtered.transition()
-            .duration(monVars.trans_dur/6)
-            .attr("x1", function(d, i) {
-                if (i == 0)
-                {
-                    return monVars.chart_Xoffset + 
-                            (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
-                            monVars.xScale(monthNames[i]);
-                    // return t_oldX;
-                }
-                else
-                {
-                    // return t_oldX;
-                    return monVars.chart_Xoffset + 
-                            (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
-                            monVars.xScale(monthNames[i-1]);
-                }
-            })
-            .attr("y1", function(d, i) {
-                if (i == 0)
-                {
-                    // if (d.movieIds.length )
-                    t_oldY = monVars.chart_height + monVars.chart_Yoffset - 
-                            monVars.yScaleR(d.totalRating / d.movieIds.length);
+    //     lines_filtered.exit().remove();
 
-                    return t_oldY;
-                }
-                else
-                {
-                    // return t_oldY;
-                    return monVars.chart_height + monVars.chart_Yoffset - 
-                            monVars.yScaleR(db_month_filtered[i-1].totalRating / db_month_filtered[i-1].movieIds.length);
-                }
-            })
-            .attr("x2", function(d, i) {
-                return monVars.chart_Xoffset + 
-                        (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
-                        monVars.xScale(monthNames[i]);
+    //     lines_filtered.transition()
+    //         .duration(monVars.trans_dur/6)
+    //         .attr("x1", function(d, i) {
+    //             if (i == 0)
+    //             {
+    //                 return monVars.chart_Xoffset + 
+    //                         (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+    //                         monVars.xScale(monthNames[i]);
+    //                 // return t_oldX;
+    //             }
+    //             else
+    //             {
+    //                 // return t_oldX;
+    //                 return monVars.chart_Xoffset + 
+    //                         (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+    //                         monVars.xScale(monthNames[i-1]);
+    //             }
+    //         })
+    //         .attr("y1", function(d, i) {
+    //             if (i == 0)
+    //             {
+    //                 // if (d.movieIds.length )
+    //                 t_oldY = monVars.chart_height + monVars.chart_Yoffset - 
+    //                         monVars.yScaleR(d.totalRating / d.movieIds.length);
 
-                // return t_oldX;
-            })
-            .attr("y2", function(d, i) {
-                return monVars.chart_height + monVars.chart_Yoffset - 
-                        monVars.yScaleR(d.totalRating / d.movieIds.length);
+    //                 return t_oldY;
+    //             }
+    //             else
+    //             {
+    //                 // return t_oldY;
+    //                 return monVars.chart_height + monVars.chart_Yoffset - 
+    //                         monVars.yScaleR(db_month_filtered[i-1].totalRating / db_month_filtered[i-1].movieIds.length);
+    //             }
+    //         })
+    //         .attr("x2", function(d, i) {
+    //             return monVars.chart_Xoffset + 
+    //                     (monVars.xScale(monthNames[1])/2) - monVars.xScale(monthNames[0]) + 
+    //                     monVars.xScale(monthNames[i]);
+
+    //             // return t_oldX;
+    //         })
+    //         .attr("y2", function(d, i) {
+    //             return monVars.chart_height + monVars.chart_Yoffset - 
+    //                     monVars.yScaleR(d.totalRating / d.movieIds.length);
                 
-                // return t_oldY;
-            })
-            .attr("stroke", "black");
+    //             // return t_oldY;
+    //         })
+    //         .attr("stroke", "black");
 
         // lines_filtered = monVars.svg.select("#lineMonth_filtered")
         //     .selectAll("path")

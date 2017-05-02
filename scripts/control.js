@@ -27,6 +27,7 @@ function updateDBs()
 {
     update_genresDB(true);
     update_monthDB();
+	update_tableDB();
 }
 
 function redrawFiltered()
@@ -36,4 +37,5 @@ function redrawFiltered()
 	recalculateAxes_month();
 	redrawAxes_month();
 	drawFiltered_month();
+	redrawFiltered_table();
 }
