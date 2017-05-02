@@ -40,7 +40,12 @@ function drawModule_table()
 function redrawFiltered_table()
 {
 	var trans_dur = 600;
-	var tableName = topTableWrapper;
+	var tableName = "topTableWrapper";
+
+	d3.select("#topTable")
+			.select("tbody")
+            .selectAll("tr")
+            .remove();
 
 
 	var table_trs;
