@@ -385,8 +385,19 @@ function redrawAxes_month()
     monVars.svg.select("#xAxisMonth")
         .selectAll('.tick')
         .on("click", function(d, i) {
-            console.log(d);
-            console.log(i);
+            if (filters.month.size > 0)
+            {
+                var filterStr = "month-" + Array.from(filters.month)[0];
+
+                // Repeating logic for smooth transitions.
+                clickMonth(d);
+
+                removeButton(filterStr);
+            }
+            else
+            {
+                clickMonth(d);
+            }
         });
 
     monVars.svg.select("#yAxisMonthL")
@@ -442,7 +453,7 @@ function drawFiltered_month()
                 return monVars.color_default;
             })
             .attr("id", function(d) {
-                return "month:" + d.monthName;
+                return "month-" + d.monthName;
             });
 
     bars_filtered.on('mouseover', function(d) {
@@ -490,15 +501,7 @@ function drawFiltered_month()
             console.log("---------");
             console.log(d);
 
-            if (!filters.month.has(d.monthName))
-            {
-                filters.num++;
-                filters.month.add(d.monthName);
-                // filters.month.push(d.key);
-                newButton("month:"+d.monthName);
-
-                updateFiltered();
-            }
+            clickMonth(d.monthName);
         });
 
     // var ratingLine = d3.line()
@@ -692,6 +695,20 @@ function init_monthArray()
 function parseMonthStr(monthStr)
 {
     return monthNames.indexOf(monthStr);
+}
+
+
+function clickMonth(monthName)
+{
+    if (!filters.month.has(monthName))
+    {
+        filters.num++;
+        filters.month.add(monthName);
+        // filters.month.push(d.key);
+        newButton("month-"+monthName);
+
+        updateFiltered();
+    }
 }
 
 
