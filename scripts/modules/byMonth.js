@@ -382,6 +382,13 @@ function redrawAxes_month()
             (monVars.chart_height + monVars.chart_Yoffset) + ")")
         .call(monVars.xAxis);
 
+    monVars.svg.select("#xAxisMonth")
+        .selectAll('.tick')
+        .on("click", function(d, i) {
+            console.log(d);
+            console.log(i);
+        });
+
     monVars.svg.select("#yAxisMonthL")
         .transition()
         .duration(monVars.trans_dur*2)
