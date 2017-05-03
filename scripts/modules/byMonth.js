@@ -29,12 +29,12 @@ function drawModule_month()
     // var chart_width = 900;
     // var chart_height = 400;
 
-    var mod_width = 560;
-    var mod_height = 360;
-    var chart_width = 480;
-    var chart_height = 300;
+    var mod_width = 740;
+    var mod_height = 450;
+    var chart_width = 654;
+    var chart_height = 380;
 
-    var chart_Xoffset = 46;
+    var chart_Xoffset = 60;
     var chart_Yoffset = 26;
     // update_genresDB(false);
 
@@ -118,19 +118,19 @@ function drawModule_month()
         .domain([0, monthNumLocalMax])
         .range([0, chart_height]).nice();
 
-    var yScaleR = d3.scaleLinear()
-        // .domain([0, monthAvgLocalMax])
-        .domain([0, 10])
-        .range([0, chart_height]).nice();
+    // var yScaleR = d3.scaleLinear()
+    //     // .domain([0, monthAvgLocalMax])
+    //     .domain([0, 10])
+    //     .range([0, chart_height]).nice();
 
     var yScaleAxisL = d3.scaleLinear()
         .domain([0, monthNumLocalMax])
         .range([chart_height, 0]).nice();
 
-    var yScaleAxisR = d3.scaleLinear()
-        // .domain([0, monthAvgLocalMax])
-        .domain([0, 10])
-        .range([chart_height, 0]).nice();
+    // var yScaleAxisR = d3.scaleLinear()
+    //     // .domain([0, monthAvgLocalMax])
+    //     .domain([0, 10])
+    //     .range([chart_height, 0]).nice();
 
 
     var xAxis = d3.axisBottom();
@@ -139,8 +139,8 @@ function drawModule_month()
     var yAxisL = d3.axisLeft();
     yAxisL.scale(yScaleAxisL);
 
-    var yAxisR = d3.axisRight();
-    yAxisR.scale(yScaleAxisR);
+    // var yAxisR = d3.axisRight();
+    // yAxisR.scale(yScaleAxisR);
 
 
     // More updating of global genre variables.
@@ -149,12 +149,12 @@ function drawModule_month()
     monVars.monthNumLocalMax    = monthNumLocalMax;
     monVars.xScale              = xScale;
     monVars.yScaleL             = yScaleL;
-    monVars.yScaleR             = yScaleR;
+    // monVars.yScaleR             = yScaleR;
     monVars.xAxis               = xAxis;
     monVars.yScaleAxisL         = yScaleAxisL;
-    monVars.yScaleAxisR         = yScaleAxisR;
+    // monVars.yScaleAxisR         = yScaleAxisR;
     monVars.yAxisL              = yAxisL;
-    monVars.yAxisR              = yAxisR;
+    // monVars.yAxisR              = yAxisR;
 
 
     redrawAxes_month();
@@ -407,10 +407,10 @@ function redrawAxes_month()
             monVars.chart_Yoffset + ")")
         .call(monVars.yAxisL);
 
-    monVars.svg.select("#yAxisMonthR")
-        .attr("transform", "translate(" + (monVars.chart_Xoffset + monVars.chart_width) + 
-            ", " + monVars.chart_Yoffset + ")")
-        .call(monVars.yAxisR);
+    // monVars.svg.select("#yAxisMonthR")
+    //     .attr("transform", "translate(" + (monVars.chart_Xoffset + monVars.chart_width) + 
+    //         ", " + monVars.chart_Yoffset + ")")
+    //     .call(monVars.yAxisR);
 }
 
 function drawFiltered_month()

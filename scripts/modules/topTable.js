@@ -41,6 +41,7 @@ function redrawFiltered_table()
 {
 	var trans_dur = 600;
 	var tableName = "topTableWrapper";
+	var base_url = "http://www.imdb.com/title/tt";
 
 	d3.select("#topTable")
 			.select("tbody")
@@ -62,6 +63,12 @@ function redrawFiltered_table()
         table_trs = table_trs.enter()
         	.append("tr")
         	.merge(table_trs);
+
+        table_trs.on("click", function(d, i) {
+        	// console.log(d);
+        	// var url = "http://google.com";
+        	window.open(base_url + d.imdbId);
+        });
 
         // table_rows.transition()
         // 	.duration(trans_dur/6)
@@ -85,6 +92,20 @@ function redrawFiltered_table()
         	.append("td")
         	.text(function(d) {
         		return d;
+        	})
+        	.attr("width", function(d, i) {
+        		if (i == 0)
+        		{
+        			return "70%";
+        		}
+        		return "15%";
+        	})
+        	.attr("class", function(d, i) {
+        		if (i == 0)
+        		{
+        			return "td_left";
+        		}
+        		return "td_center";
         	});
 
 }
@@ -92,8 +113,8 @@ function redrawFiltered_table()
 
 function update_tableDB()
 {
-	var MOVIE_LIMIT = 20;
-	var MINIMUM_VOTES = 10000 * 10;
+	var MOVIE_LIMIT = 40;
+	var MINIMUM_VOTES = 20000 * 10;
 
 	db_table_filtered = [];
 
@@ -134,7 +155,8 @@ function update_tableDB()
     // });
 
 
-	while (db_table_filtered.length < movies_filtered.length/1000)
+	while (db_table_filtered.length < MOVIE_LIMIT &&
+		db_table_filtered.length < movies_filtered.length/1000)
 	{
 		MINIMUM_VOTES = MINIMUM_VOTES/10;
 

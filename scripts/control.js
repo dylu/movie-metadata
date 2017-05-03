@@ -13,6 +13,7 @@ function execute_control()
 	drawModule_genre();
 	drawModule_month();
 	drawModule_table();
+	drawModule_mpaaRating();
 }
 
 function updateFiltered()
@@ -28,6 +29,7 @@ function updateDBs()
     update_genresDB(true);
     update_monthDB();
 	update_tableDB();
+	update_mpaaDB();
 }
 
 function redrawFiltered()
@@ -38,4 +40,5 @@ function redrawFiltered()
 	redrawAxes_month();
 	drawFiltered_month();
 	redrawFiltered_table();
+	drawFiltered_mpaa();
 }

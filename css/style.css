@@ -50,12 +50,17 @@ table
 
 th
 {
-    background-color: #FAFAFA;
+    background-color: #F9F9F9;
 }
 
 tr:nth-child(even)
 {
-    background-color: #F4F4F4
+    background-color: #EFEFEF
+}
+
+tr:nth-child(odd)
+{
+    background-color: #E4E4E4
 }
 
 tr:hover
@@ -63,6 +68,18 @@ tr:hover
     background-color: #F6F6F6
 }
 
+
+#layoutLeft
+{
+    width: 1260px;
+    float: left;
+}
+
+#layoutRight
+{
+    margin-left: 1260px;
+
+}
 
 #header
 {
@@ -73,7 +90,7 @@ tr:hover
 
 .d3_module
 {
-    margin: 2em 2em 3.6em 4.2em;
+    margin: 0.2em 0.8em 0.36em 0.42em;
     /*padding: 2em 2em 3.6em 4.2em;*/
     /*background-color: #EEE;*/
 }
@@ -81,6 +98,13 @@ tr:hover
 .d3_module svg
 {
     background-color: #F6F6F6;
+}
+
+.d3_module_2
+{
+    margin: 1em 2em 1.6em 4.2em;
+    /*padding: 2em 2em 3.6em 4.2em;*/
+    /*background-color: #EEE;*/
 }
 
 
@@ -136,6 +160,42 @@ tr:hover
     /*cursor: not-allowed;*/
 }
 
+/** BPAA Rating **/
+#byMpaaRating
+{
+    font-size: 2.0em;
+}
+
+
+/** Table **/
+#topTableWrapper table
+{
+    font-size: 2.36em;
+    width: 96%;
+}
+
+#topTableWrapper th, td
+{
+    height: 1.2em;
+    padding: 0.2em;
+    vertical-align: center;
+}
+
+#topTableWrapper p
+{
+    margin-top: 1em;
+    font-size: 2.4em;
+}
+
+.td_left
+{
+    text-align: left;
+}
+
+.td_center
+{
+    text-align: center;
+}
 
 
 /** Style Classes **/
