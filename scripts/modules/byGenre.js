@@ -246,7 +246,7 @@ function drawModule_genre()
                 filters.num++;
                 filters.genre.add(d.key);
                 // filters.genre.push(d.key);
-                newButton("genre-"+d.key);
+                newButton("genre_"+d.key);
 
                 updateFiltered();
             }

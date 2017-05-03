@@ -8,7 +8,7 @@ function updateButtons()
 function removeButton(filterString)
 {
 	console.log("removing Button");
-	var filterSplit = filterString.split("-");
+	var filterSplit = filterString.split("_");
 	if (filterSplit.length < 2)
 	{
 		return;
@@ -45,7 +45,7 @@ function newButton(filterString)
 	d3.select("#allButton")
 		.classed("noDisplay", true);
 
-	var filterSplit = filterString.split("-");
+	var filterSplit = filterString.split("_");
 	if (filterSplit.length < 2)
 	{
 		return;

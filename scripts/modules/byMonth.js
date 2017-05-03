@@ -387,9 +387,9 @@ function redrawAxes_month()
         .on("click", function(d, i) {
             if (filters.month.size > 0)
             {
-                var filterStr = "month-" + Array.from(filters.month)[0];
+                var filterStr = "month_" + Array.from(filters.month)[0];
 
-                // Repeating logic for smooth transitions.
+                // 'Repeating' logic for smooth transitions.
                 clickMonth(d);
 
                 removeButton(filterStr);
@@ -453,7 +453,7 @@ function drawFiltered_month()
                 return monVars.color_default;
             })
             .attr("id", function(d) {
-                return "month-" + d.monthName;
+                return "month_" + d.monthName;
             });
 
     bars_filtered.on('mouseover', function(d) {
@@ -705,7 +705,7 @@ function clickMonth(monthName)
         filters.num++;
         filters.month.add(monthName);
         // filters.month.push(d.key);
-        newButton("month-"+monthName);
+        newButton("month_"+monthName);
 
         updateFiltered();
     }
