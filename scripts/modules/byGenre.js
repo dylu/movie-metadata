@@ -209,7 +209,7 @@ function drawModule_genre()
         .on('mouseout', function(d) {
             var nodeSelection = d3.select(this)
                 .transition().duration(trans_dur/4)
-                .style("fill", function(d) {
+                .style("fill", function(d2) {
                 // return colorScale(d.key);
                 return color_default;
             });

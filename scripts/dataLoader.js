@@ -15,6 +15,7 @@ function load_data()
     filters.genre = new Set();
     // filters.genre = [];
     filters.month = new Set();
+    filters.mpaa = new Set();
     // filters.year = [];
 
 
@@ -266,6 +267,16 @@ function applyFilters(movElem)
     {
         filters.month.forEach(function(filterVal) {
             if (!movElem.releaseMonth.includes(filterVal))
+            {
+                passFlag = false;
+            }
+        });
+    }
+
+    if (filters.mpaa.size > 0)
+    {
+        filters.mpaa.forEach(function(filterVal) {
+            if (!movElem.mpaaRating.includes(filterVal))
             {
                 passFlag = false;
             }

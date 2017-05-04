@@ -182,12 +182,34 @@ function drawModule_mpaaRating()
         //             });
         //     })
 
+        arcs_filtered
+            .on('mouseover', function(d, i) {
+                d3.select(this)
+                    .style("fill", function(d2) {
+                        return color_scale_hover(i);
+                    });
+            })
+            .on('click', function(d, i) {
+                // console.log(d.data.key);
+                if (d.data.key != "Other" &&
+                    !filters.mpaa.has(d.data.key))
+                {
+                    filters.num++;
+                    filters.mpaa.add(d.data.key);
+                    // filters.genre.push(d.key);
+                    newButton("mpaa_"+d.data.key);
+
+                    updateFiltered();
+                }
+            });
+
+
         arcs_text_filtered = //svg.select("#textMpaa")
             arcs_filtered;
 
         arcs_text_filtered = 
             arcs_text_filtered.append("text")
-	        .attr("transform", function(d) { 
+	        .attr("transform", function(d, i) { 
                 return "translate(" + pieLabel.centroid(d) + ")"; 
             })
 	        .attr("dy", "0.35em")
@@ -263,7 +285,7 @@ function drawModule_mpaaRating()
 function drawFiltered_mpaa()
 {
     mpaaVars.svg.selectAll(".arc").remove();
-    
+
     var pieData = d3.pie()
                     .sort(null)
                     .value(function(d) {
@@ -320,6 +342,29 @@ function drawFiltered_mpaa()
             })
             .attr("id", function(d) {
                 return d;
+            });
+
+
+        arcs_filtered
+            .on('mouseover', function(d, i) {
+                d3.select(this)
+                    .style("fill", function(d2) {
+                        return mpaaVars.color_scale_hover(i);
+                    });
+            })
+            .on('click', function(d, i) {
+                // console.log("d.data.key");
+                // console.log(d.data.key);
+                if (d.data.key != "Other" &&
+                    !filters.mpaa.has(d.data.key))
+                {
+                    filters.num++;
+                    filters.mpaa.add(d.data.key);
+                    // filters.genre.push(d.key);
+                    newButton("mpaa_"+d.data.key);
+
+                    updateFiltered();
+                }
             });
 
         // arcs_filtered
