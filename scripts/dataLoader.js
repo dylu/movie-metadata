@@ -2,10 +2,10 @@
 var movies;
 var movies_filtered;
 var filters;
-// var mLens_links;
 
-
-
+/**
+ * Initializes and loads all data from provided .csv files.
+ */
 function load_data()
 {
     // Instantiating global variables.
@@ -13,11 +13,8 @@ function load_data()
     filters = new Object();
     filters.num = 0;
     filters.genre = new Set();
-    // filters.genre = [];
     filters.month = new Set();
     filters.mpaa = new Set();
-    // filters.year = [];
-
 
     console.log(".[dataloader.load_data] \n - Calling MovieData");
     loadMovieData(true);
@@ -36,7 +33,6 @@ function loadMovieData(isInit)
         var filterFlag;
 
         csvData_movie.forEach(function (d, i) {
-            // console.log(d.genres.split("|"));
             t_allGenres = d.genres.replace("(no genres listed)","(none)").split("|");
             
 
@@ -50,13 +46,9 @@ function loadMovieData(isInit)
             t_movieObj.ratingNum = 0;
             t_movieObj.ratingAvg = -1;
 
-            // movies.push(t_movieObj);
             movies[d.movieId] = t_movieObj;
         });
 
-
-        // console.log(".[dataloader.loadMovieData] \n - Calling LinkData");
-        // loadLinkData();
 
         if (isInit)
         {
@@ -72,6 +64,11 @@ function loadIMDbData(isInit)
     imdbHelper(0, isInit);
 }
 
+/**
+ * imdb Data is huge -- split into six separate files.
+ * 
+ * Mostly to allow pre-processing an easier way to handle data scraping.
+ */
 function imdbHelper(idx, isInit)
 {
     // Loading Data - MovieLens/link.csv
@@ -120,7 +117,6 @@ function imdbHelper(idx, isInit)
 
         if (idx >=0 && idx < 6)
         {
-            // console.log(".[dataloader.imdbHelper] \n - Calling imdbHelper with value: " + (idx+1));
             imdbHelper(idx+1, isInit);
         }
         else if (idx == 6)
@@ -139,9 +135,10 @@ function imdbHelper(idx, isInit)
 }
 
 
-/** Loads Rating Data.
- *  Currently pulls rating data from MovieLens, instead of IMDB.
- **/
+/** 
+ * Loads Rating Data.
+ * Currently pulls rating data from MovieLens, instead of IMDB.
+ */
 function loadRatingData(isInit)
 {
     // Loading data - MovieLends/rating.csv
@@ -158,7 +155,6 @@ function loadRatingData(isInit)
             }
             else
             {
-                // movies[d.movieId].ratings = d.ratings.split("|");
                 movies[d.movieId].ratingNum = d.numRatings;
                 movies[d.movieId].ratingAvg = d.ratingAvg;
             }
@@ -170,23 +166,15 @@ function loadRatingData(isInit)
         {
             execute_control();
         }
-        
-        // console.log(".[dataloader.loadRatingData] \n - Printing movies obj");
-        // console.log(movies);
-
     });
 }
 
 
-
+/**
+ * Runs a filter through the movie list.
+ */
 function filter_movies()
 {
-    // loadMovieData(false);
-
-    // filters.num++;
-    // filters.genre = ["Action", "Drama"];
-
-
     var filterDebugStr = "None.";
 
     if (filters.num == 0)
@@ -197,12 +185,6 @@ function filter_movies()
     {
         movies_filtered = movies.filter(applyFilters);
 
-
-        // filterDebugStr = filters.genre[0];
-        // for (i = 1; i < filters.genre.length; i++)
-        // {
-        //     filterDebugStr += (", " + filters.genre[i]);
-        // }
         filterDebugStr = "";
         filters.genre.forEach(function(filterVal) {
             filterDebugStr += (filterVal + " | ");
@@ -211,18 +193,19 @@ function filter_movies()
     filterDebugStr = filterDebugStr.substring(0, filterDebugStr.length-3);
 
 
-    console.log("Filter:  Genres [" + filterDebugStr + "]");
-    console.log(" -- ");
-    console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
-    console.log(movies_filtered);
+    // console.log("Filter:  Genres [" + filterDebugStr + "]");
+    // console.log(" -- ");
+    // console.log(".[dataloader.filter_movies] \n - Printing movies_filtered obj");
+    // console.log(movies_filtered);
 
     console.log(".[dataloader.filter_movies] \n - Printing sizes");
     console.log("  movies num: " + movies.length);
     console.log("filtered num: " + movies_filtered.length);
-
-    // execute_control();
 }
 
+/**
+ * Helper function -- Filter
+ */
 function applyFilters(movElem)
 {
     if (filters.num == 0)
@@ -233,34 +216,13 @@ function applyFilters(movElem)
     var passFlag = true;
 
     if (filters.genre.size > 0)
-    // if (filters.genre.length > 0)
     {
-
-        // filters.genre.forEach(function (genre) {
-            // console.log(movElem.genres.includes(genre));
-            // if (!movElem.genres.includes(genre))
-            // {
-            //     console.log("no, " + movElem.id);
-            //     return false;
-            // }
-
-        // for (i = 0; i < filters.genre.size; i++)
-        // // for (i = 0; i < filters.genre.length; i++)
-        // {
-        //     if (!movElem.genres.includes(Array.from(filters.genre)[i]))
-        //     {
-        //         return false;
-        //     }
-        // }
-
         filters.genre.forEach(function(filterVal) {
             if (!movElem.genres.includes(filterVal))
             {
                 passFlag = false;
             }
         });
-            
-        // });
     }
 
     if (filters.month.size > 0)
@@ -285,11 +247,4 @@ function applyFilters(movElem)
 
     return passFlag;
 }
-
-
-
-
-
-
-
 

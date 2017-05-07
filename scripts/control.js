@@ -2,20 +2,25 @@
 // mLens_movies
 
 
+/**
+ * Functions that handle global updating of all modules.
+ */
 load_data();
 
+/**
+ * First draw of every module
+ */
 function execute_control()
 {
-
-	// console.log("[control.js | execute_control] - start.");
-	// console.log(mLens_movies);
-
 	drawModule_genre();
 	drawModule_month();
 	drawModule_table();
 	drawModule_mpaaRating();
 }
 
+/**
+ * Update all filtered values
+ */
 function updateFiltered()
 {
 	filter_movies();
@@ -24,6 +29,9 @@ function updateFiltered()
     redrawFiltered();
 }
 
+/**
+ * Update each module's specific values
+ */
 function updateDBs()
 {
     update_genresDB(true);
@@ -32,6 +40,9 @@ function updateDBs()
 	update_mpaaDB();
 }
 
+/**
+ * Redraw all modules.
+ */
 function redrawFiltered()
 {
 	drawFiltered_genre();

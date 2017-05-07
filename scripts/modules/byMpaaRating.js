@@ -1,12 +1,13 @@
 /** Global Variables containing data **/
-// var movies;
-
-// var selected_genre;
 var db_mpaa;
 var db_mpaa_filtered;
 
 var mpaaVars;
 
+
+/**
+ * First draw of mpaa rating pie chart.
+ */
 function drawModule_mpaaRating()
 {
     db_mpaa = [];
@@ -16,7 +17,6 @@ function drawModule_mpaaRating()
 
     var graphName = "byMpaaRating";
     var trans_dur = 600;                // Transition Duration in Milliseconds.
-    // var mod_width = 600;
     var mod_width = 450;
     var mod_height = 450;
     var chart_width = 424;
@@ -74,39 +74,6 @@ function drawModule_mpaaRating()
         .attr("transform", "translate(" + mod_width/2 + "," + mod_height/2 + ")");
 
 
-
-    console.log("Printing db_mpaa.");
-    console.log(db_mpaa);
-
-    // console.log("Printing db_mpaa length.");
-    // console.log(db_mpaa.length);
-
-
-    // for (var property in mLens_genres)
- //    for (var property in db_mpaa)
- //    {
-	//     if (db_mpaa.hasOwnProperty(property))
-	//     {
-	//     	// do stuff
-	//     	genreArr[numGenres] = property;
-	//     	numGenres++;
-
-	//     	genreLocalMax = Math.max(genreLocalMax, db_mpaa[property]);
-	//     }
-	// }
-
-	// genreArr.sort();
-
-	// console.log("Printing numGenres, genreArr.");
-	// console.log(numGenres);
-	// console.log(genreArr);
-
-	// var t_id;
-	// var t_genres;
-	// var t_rating;
-
-
-	// var x - d3.scaleBand().r
 	var svg = d3.select("#"+graphName).select("svg");
 
 
@@ -117,9 +84,6 @@ function drawModule_mpaaRating()
     var pieData = d3.pie()
                     .sort(null)
                     .value(function(d) {
-                        // console.log("omfg hello");
-                        // console.log(d);
-                        // return 10;
                         return +d.value;
                     });
 
@@ -136,25 +100,15 @@ function drawModule_mpaaRating()
     var arcs_filtered;
     var arcs_text_filtered;
 
-        arcs_filtered = //svg.select("#pieMpaa")
-        // arcs_filtered = svg.select("#" + graphName)
-        svg
-            .selectAll(".arc")
+        arcs_filtered =
+        svg .selectAll(".arc")
             .data(pieData(d3.entries(db_mpaa_filtered)))
-            // .data(pieData(db_mpaa))
             .enter()
-            // .append("path")
             .append("g")
             .attr("transform", "translate(" + mod_width/2 + "," + mod_height/2 + ")")
             .attr("class", "arc");
-            // .data(db_mpaa);
-
-    // console.log("AGAIWEOJFOIAEW");
-    // console.log(d3.entries(db_mpaa));
-    // console.log(db_mpaa);
 
 	    arcs_filtered = arcs_filtered.enter()
-	        // .append("path")
             .append("g")
             .attr("class", "arc")
 	        .merge(arcs_filtered);
@@ -162,8 +116,6 @@ function drawModule_mpaaRating()
 	    arcs_filtered.exit().remove();
 
 	    arcs_filtered
-         //    .transition()
-	        // .duration(trans_dur/6)
             .append("path")
             .attr("d", piePath)
             .style("fill", function(d, i) {
@@ -174,14 +126,6 @@ function drawModule_mpaaRating()
                 return d;
             });
 
-        // arcs_filtered
-        //     .on('mouseover', function(d) {
-        //         d3.select(this)
-        //             .style("fill", function(d, i) {
-        //                 return color_scale_hover(i);
-        //             });
-        //     })
-
         arcs_filtered
             .on('mouseover', function(d, i) {
                 d3.select(this)
@@ -190,13 +134,11 @@ function drawModule_mpaaRating()
                     });
             })
             .on('click', function(d, i) {
-                // console.log(d.data.key);
                 if (d.data.key != "Other" &&
                     !filters.mpaa.has(d.data.key))
                 {
                     filters.num++;
                     filters.mpaa.add(d.data.key);
-                    // filters.genre.push(d.key);
                     newButton("mpaa_"+d.data.key);
 
                     updateFiltered();
@@ -204,8 +146,7 @@ function drawModule_mpaaRating()
             });
 
 
-        arcs_text_filtered = //svg.select("#textMpaa")
-            arcs_filtered;
+        arcs_text_filtered = arcs_filtered;
 
         arcs_text_filtered = 
             arcs_text_filtered.append("text")
@@ -214,74 +155,15 @@ function drawModule_mpaaRating()
             })
 	        .attr("dy", "0.35em")
 	        .text(function(d) {
-                // console.log("omfg2");
-                // console.log(d);
 	            return d.data.key;
 	        })
 
-    // if (filters.genre.length > 0)
-    {
-        // drawFiltered_mpaa();
-    }
-
-    // bars.on('mouseover', function(d) {
-    //         // No transition time on mouseover, to preserve responsiveness.
-    //         var nodeSelection = 
-    //         	d3.select(this)
-    //             	.style("fill", function(d) {
-    //                     return color_hover;
-    //         		});
-    //     })
-    //     // Original bar color restored.
-    //     .on('mouseout', function(d) {
-    //         var nodeSelection = d3.select(this)
-    //             .transition().duration(trans_dur/4)
-    //             .style("fill", function(d) {
-    //             // return colorScale(d.key);
-    //             return color_default;
-    //         });
-            
-    //         // d3.select("#bars_tooltip").classed("hidden", true);
-    //     })
-    //     // New Filters.
-    //     .on('click', function(d) {
-
-    //         var nodeSelection = d3.select(this);
-
-    //         nodeSelection
-    //             .transition().duration(trans_dur/16)
-    //             .style("fill", "#CCC")
-    //             .on("end", function() {
-    //                 d3.select(this)
-    //                 .transition().duration(trans_dur/4)
-    //                 // .style("fill", "#5E35B1");
-    //                 .style("fill", color_click);
-    //             });
-
-    //         // Outputting selection to console.
-    //         // console.log("Selected the " + d.year + " value for " + 
-    //         //     [selectedDimension] + ", " + d[selectedDimension]);
-
-    //         // console.log(selected_genre);
-
-    //         console.log("---------");
-    //         console.log("--CLICK--");
-    //         console.log("---------");
-
-    //         if (!filters.genre.has(d.key))
-    //         {
-    //             filters.num++;
-    //             filters.genre.add(d.key);
-    //             // filters.genre.push(d.key);
-    //             newButton("genre-"+d.key);
-
-    //             updateFiltered();
-    //         }
-    //     });
-    
-
 }
 
+
+/**
+ * Redrawing pie chart with updated filtered data.
+ */
 function drawFiltered_mpaa()
 {
     mpaaVars.svg.selectAll(".arc").remove();
@@ -289,9 +171,6 @@ function drawFiltered_mpaa()
     var pieData = d3.pie()
                     .sort(null)
                     .value(function(d) {
-                        // console.log("omfg hello");
-                        // console.log(d);
-                        // return 10;
                         return +d.value;
                     });
 
@@ -306,25 +185,15 @@ function drawFiltered_mpaa()
     var arcs_filtered;
     var arcs_text_filtered;
 
-        arcs_filtered = //svg.select("#pieMpaa")
-        // arcs_filtered = svg.select("#" + graphName)
-        mpaaVars.svg
+        arcs_filtered = mpaaVars.svg
             .selectAll(".arc")
             .data(pieData(d3.entries(db_mpaa_filtered)))
-            // .data(pieData(db_mpaa))
             .enter()
-            // .append("path")
             .append("g")
             .attr("transform", "translate(" + mpaaVars.mod_width/2 + "," + mpaaVars.mod_height/2 + ")")
             .attr("class", "arc");
-            // .data(db_mpaa);
-
-    // console.log("AGAIWEOJFOIAEW");
-    // console.log(d3.entries(db_mpaa));
-    // console.log(db_mpaa);
 
         arcs_filtered = arcs_filtered.enter()
-            // .append("path")
             .append("g")
             .attr("class", "arc")
             .merge(arcs_filtered);
@@ -332,12 +201,9 @@ function drawFiltered_mpaa()
         arcs_filtered.exit().remove();
 
         arcs_filtered
-         //    .transition()
-            // .duration(trans_dur/6)
             .append("path")
             .attr("d", piePath)
             .style("fill", function(d, i) {
-                // return color_default;
                 return mpaaVars.color_scale(i);
             })
             .attr("id", function(d) {
@@ -353,30 +219,18 @@ function drawFiltered_mpaa()
                     });
             })
             .on('click', function(d, i) {
-                // console.log("d.data.key");
-                // console.log(d.data.key);
                 if (d.data.key != "Other" &&
                     !filters.mpaa.has(d.data.key))
                 {
                     filters.num++;
                     filters.mpaa.add(d.data.key);
-                    // filters.genre.push(d.key);
                     newButton("mpaa_"+d.data.key);
 
                     updateFiltered();
                 }
             });
 
-        // arcs_filtered
-        //     .on('mouseover', function(d) {
-        //         d3.select(this)
-        //             .style("fill", function(d, i) {
-        //                 return color_scale_hover(i);
-        //             });
-        //     })
-
-        arcs_text_filtered = //svg.select("#textMpaa")
-            arcs_filtered;
+        arcs_text_filtered = arcs_filtered;
 
         arcs_text_filtered = 
             arcs_text_filtered.append("text")
@@ -385,21 +239,20 @@ function drawFiltered_mpaa()
             })
             .attr("dy", "0.35em")
             .text(function(d) {
-                // console.log("omfg2");
-                // console.log(d);
                 return d.data.key;
             })
 }
 
 
-
+/**
+ * updating db of pie chart with filtered data.
+ */
 function update_mpaaDB()
 {
     var t_mpaaRatings;
     db_mpaa_filtered = [];
 
     movies_filtered.forEach(function (movie_elem) {
-        // console.log(d.genres.split("|"));
         t_mpaaRatings = movie_elem.mpaaRating;
 
         if (t_mpaaRatings != "R"        &&

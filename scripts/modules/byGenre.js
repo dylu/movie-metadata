@@ -1,12 +1,13 @@
 /** Global Variables containing data **/
-// var movies;
-
-// var selected_genre;
 var db_genres;
 var db_genres_filtered;
 
 var genVars;
 
+
+/**
+ * Function to initialize and do the first draw of the genre module.
+ */
 function drawModule_genre()
 {
     db_genres = [];
@@ -16,7 +17,6 @@ function drawModule_genre()
 
     var graphName = "byGenre";
     var trans_dur = 600;                // Transition Duration in Milliseconds.
-    // var mod_width = 600;
     var mod_width = 1200;
     var mod_height = 500;
     var chart_width = 1100;
@@ -57,15 +57,6 @@ function drawModule_genre()
         .attr("height", mod_height);
 
 
-
-    console.log("Printing db_genres.");
-    console.log(db_genres);
-
-    // console.log("Printing db_genres length.");
-    // console.log(db_genres.length);
-
-
-    // for (var property in mLens_genres)
     for (var property in db_genres)
     {
 	    if (db_genres.hasOwnProperty(property))
@@ -80,35 +71,25 @@ function drawModule_genre()
 
 	genreArr.sort();
 
-	// console.log("Printing numGenres, genreArr.");
-	// console.log(numGenres);
-	// console.log(genreArr);
 
 	var t_id;
 	var t_genres;
 	var t_rating;
 
 
-	// var x - d3.scaleBand().r
 	var svg = d3.select("#"+graphName).select("svg");
 
 	var xScale = d3.scaleBand()
         .domain(genreArr)
-        // .domain(["Action", "Animation", "Drama"])
-        // .range([xAxisWidth, chartWidth])
         .range([0, chart_width])
         .paddingInner(0.1)
         .paddingOuter(0.12);
 
     var yScale = d3.scaleLinear()
-        // .domain([0, maxYval])
-        // .range([chartHeight - yAxisHeight, yPadding]).nice();
         .domain([0, genreLocalMax])
         .range([0, chart_height]).nice();
 
     var yScaleAxis = d3.scaleLinear()
-        // .domain([0, maxYval])
-        // .range([chartHeight - yAxisHeight, yPadding]).nice();
         .domain([0, genreLocalMax])
         .range([chart_height, 0]).nice();
 
@@ -128,32 +109,12 @@ function drawModule_genre()
     var yAxis = d3.axisLeft();
     yAxis.scale(yScaleAxis);
 
-    // svg.select("#xAxis")
-    //     .transition()
-    //     .duration(trans_dur)
-    //     .attr("transform", "translate(" + 0 + "," + (chartHeight - yAxisHeight) + ")")
-    //     .call(xAxis)
-    //   .selectAll("text")
-    //     .attr("y", -5)
-    //     .attr("x", -28)
-    //     .attr("transform", "rotate(-90)");
 
-    // svg.select("#yAxis")
-    //     .transition()
-    //     .duration(trans_dur)
-    //     .attr("transform", "translate(" + xAxisWidth + "," + (0) + ")")
-    //     .call(yAxis);
-
-    // svg.select("g")
     svg.select("#xAxisGenre")
-    	// .append("g")
     	.attr("transform", "translate(" + chart_Xoffset + ", " + (chart_height + chart_Yoffset) + ")")
-    	// .attr("transform", "translate(" + 40 + ", " + 440 + ")")
     	.call(xAxis);
 
-    // svg.select("g")
     svg.select("#yAxisGenre")
-    	// .append("g")
     	.attr("transform", "translate(" + chart_Xoffset + ", " + chart_Yoffset + ")")
     	.call(yAxis);
 
@@ -192,10 +153,8 @@ function drawModule_genre()
 	        	return d;
 	        });
 
-    // if (filters.genre.length > 0)
-    {
-        drawFiltered_genre();
-    }
+
+    drawFiltered_genre();
 
     bars.on('mouseover', function(d) {
             // No transition time on mouseover, to preserve responsiveness.
@@ -227,25 +186,13 @@ function drawModule_genre()
                 .on("end", function() {
                     d3.select(this)
                     .transition().duration(trans_dur/4)
-                    // .style("fill", "#5E35B1");
                     .style("fill", color_click);
                 });
-
-            // Outputting selection to console.
-            // console.log("Selected the " + d.year + " value for " + 
-            //     [selectedDimension] + ", " + d[selectedDimension]);
-
-            // console.log(selected_genre);
-
-            console.log("---------");
-            console.log("--CLICK--");
-            console.log("---------");
 
             if (!filters.genre.has(d.key))
             {
                 filters.num++;
                 filters.genre.add(d.key);
-                // filters.genre.push(d.key);
                 newButton("genre_"+d.key);
 
                 updateFiltered();
@@ -255,21 +202,15 @@ function drawModule_genre()
 
 }
 
+
+/**
+ * Function to update filtered values of the graph.
+ * Called when any filters are applied.
+ */
 function drawFiltered_genre()
 {
-    // console.log("[drawFiltered_genre]  ");
-    // console.log("db_genres: ");
-    // console.log(db_genres);
-    // console.log("db_genres_filtered: ");
-    // console.log(db_genres_filtered);
-
-    // console.log("movies: ");
-    // console.log(movies);
-    // console.log("movies_filtered: ");
-    // console.log(movies_filtered);
 
     if (filters.num <= 0)
-    // if (filters.genre.length <= 0)
     {
         bars_filtered = genVars.svg.select("#barsGenre_filtered")
             .selectAll("rect")
@@ -314,6 +255,10 @@ function drawFiltered_genre()
 }
 
 
+/**
+ * Helper function to create an 'empty genre array'.
+ * Empty array has all the genres, each initialized as 0.
+ */
 function emptyGenreArray()
 {
     var emptyArr = [];
@@ -329,7 +274,9 @@ function emptyGenreArray()
 }
 
 
-
+/**
+ * Updates the filtered 'db' -- the variable db_genres_filtered.
+ */
 function update_genresDB(onlyFilters)
 {
     var t_movieGenres;
@@ -342,19 +289,11 @@ function update_genresDB(onlyFilters)
         db_genres_filtered = [];
 
         movies.forEach(function (movie_elem) {
-            // console.log(d.genres.split("|"));
             t_movieGenres = movie_elem.genres;
             t_movieGenres.forEach(function (elem_genre) {
-                // if ([elem_genre] == "1 - September 11 (2002)\"")
-                // {
-                //     console.log("hello -- test");
-                //     console.log(d);
-                // }
                 if (!db_genres.hasOwnProperty([elem_genre]))
-                // if (db_genres[elem_genre] == null || db_genres <= 0)
                 {
                     db_genres[elem_genre] = 1;
-                    // db_genres.length++;
                 }
                 else
                 {
@@ -368,19 +307,12 @@ function update_genresDB(onlyFilters)
         db_genres_filtered = emptyGenreArray();
     }
 
-    console.log("LENGTHS ");
-    console.log(movies.length);
-    console.log(movies_filtered.length);
-
     // Filtered Movies
     movies_filtered.forEach(function (movie_elem) {
-        // console.log(d.genres.split("|"));
         t_movieGenres = movie_elem.genres;
         t_movieGenres.forEach(function (elem_genre) {
             if (!db_genres_filtered.hasOwnProperty([elem_genre]))
             {
-                // console.log("uuuugh");
-                // console.log(elem_genre);
                 db_genres_filtered[elem_genre] = 1;
             }
             else
