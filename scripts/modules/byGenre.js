@@ -18,11 +18,11 @@ function drawModule_genre()
     var graphName = "byGenre";
     var trans_dur = 600;                // Transition Duration in Milliseconds.
     var mod_width = 1200;
-    var mod_height = 500;
+    var mod_height = 466;
     var chart_width = 1100;
     var chart_height = 400;
     var chart_Xoffset = 60;
-    var chart_Yoffset = 40;
+    var chart_Yoffset = 30;
     update_genresDB(false);
 
     var color_default   = '#42A5F5';    // Blue     400
