@@ -1,6 +1,9 @@
 package imdb;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
@@ -10,52 +13,101 @@ import org.jsoup.select.Elements;
 
 public class MovieListScraper
 {
+	private static final String OUT_FILE_PREFIX = "list-metadata_";
 	private static final String BASE_URL = "http://www.imdb.com/";
-//	private static String url = "http://www.google.com";
-//	private static String url = "http://www.davidylu.com";
-	
-	private static String start_year = "2009";
-	private static String end_year = "2010";
-	private static int current_page = 1;
-	
-	private static String url_search_year = "2009";
-	private static final String URL_PARAM_BASE = "search/title?" + 
-			"sort=moviemeter,asc&title_type=feature&year=";
-	private static String url_search_params = URL_PARAM_BASE + 
-			url_search_year + "," + url_search_year;
-	
-	private static String url = BASE_URL + url_search_params;
-	
-	
+
 	private static final String USER_AGENT = 
 			"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) "
 			+ "Gecko/20100101 Firefox/25.0";
 	private static final String REFERRER_STR = "http://www.google.com";
 	private static final int TIMEOUT = 12000;
+
+	private static final String URL_PARAM_BASE = "search/title?" + 
+			"sort=moviemeter,asc&title_type=feature&year=";
+	
+	
+	
+	private PrintWriter writer;
+	
+	private int startYear = 1920;
+	private int endYear = 1940;
+	private int pageDepth = 4;
+
+	private int currentPage;
+	private int currentYear;
+	
+	private String urlSearchParams = URL_PARAM_BASE + 
+			currentYear + "," + currentYear;
+	
+	private String url = BASE_URL + urlSearchParams;
+	
+	
+	
+
+	private String outFileSuffix = "01";
 	
 	
 	private static Response response;
 	private static Document doc;
+	private static String movie_data_str = "";
 	
 
-//	final Document doc = Jsoup.connect("https://google.com/search?q=apple")  
-//	                          .userAgent(USER_AGENT)
-//	                          .get();
-
-	public static void setup()
+	public MovieListScraper(int startYear, int endYear, int pageDepth)
 	{
-		url_search_year = start_year;
-		url_search_params = URL_PARAM_BASE + 
-				url_search_year + "," + url_search_year;
+		this.startYear = startYear;
+		this.endYear = endYear;
+		this.pageDepth = pageDepth;
 		
-		url = BASE_URL + url_search_params;
-		
-		url += "&page=" + current_page + "&ref_=adv_nxt";
+		setup();
 	}
 	
-	public static void connect()
+	private void setup()
 	{
-//		Response response;
+		currentYear = startYear-1;
+//		urlSearchParams = URL_PARAM_BASE + 
+//				currentYear + "," + currentYear;
+//		
+//		url = BASE_URL + urlSearchParams;
+//		
+//		url += "&page=" + currentPage + "&ref_=adv_nxt";
+		
+		writer = null;
+		try {
+			writer = new PrintWriter(
+					new BufferedWriter(
+					new FileWriter(OUT_FILE_PREFIX + outFileSuffix + ".csv")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void nextYear()
+	{
+		currentPage = 0;
+		currentYear++;
+		
+		urlSearchParams = URL_PARAM_BASE + currentYear + "," + currentYear;
+		
+		url = BASE_URL + urlSearchParams;
+		
+		connect();
+	}
+	
+	private void nextPage()
+	{
+		currentPage++;
+		
+		if (currentPage > 1)
+		{
+			url = BASE_URL + urlSearchParams + 
+					"&page=" + currentPage + "&ref_=adv_nxt";
+		}
+		
+		connect();
+	}
+	
+	private void connect()
+	{
 		try {
 			response = Jsoup.connect(url)
 			           .ignoreContentType(true)
@@ -67,23 +119,41 @@ public class MovieListScraper
 
 			doc = response.parse();
 			
+			if (response.statusCode() != 200)
+			{
+				System.out.println("[MovieListScraper] Error: Status Code = "
+						+ response.statusCode() + "  for url: " + url);
+			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public static void process()
+	public void process()
 	{
+//		setup();
+//		connect();
 		
-		Elements movieList = doc.select("div.lister-list").select("div.lister-item.mode-advanced");
+		writeCSVHeader();
 		
-		processList(movieList);
-		
-//		System.out.println(response.statusCode());
-//		System.out.println();
-//		System.out.println(response.body());
+		for (int cYear = startYear; cYear < endYear+1; cYear++)
+		{
+			nextYear();
+			System.out.println("Year: " + currentYear);
+			for (int cPage = 1; cPage < pageDepth; cPage++)
+			{
+				nextPage();
+				if (currentPage%2 == 0)
+					System.out.println("  Page:\t" + currentPage);
+				
+				Elements movieList = doc.select("div.lister-list")
+						.select("div.lister-item.mode-advanced");
+				processList(movieList);
+			}
+		}
+
+		closeWriter();
 	}
 	
 	/**
@@ -92,150 +162,240 @@ public class MovieListScraper
 	 * 
 	 * @param movieList
 	 */
-	private static void processList(Elements movieList)
+	private void processList(Elements movieList)
 	{
-		Elements itemContentsList;
 		Element itemContents;
+		Element tmpElem;
+		String[] tmpArr;
+		int tmpIdx;
+		
 		for (Element mlistElem : movieList)
 		{
-			System.out.println(" Element " + Integer.parseInt(mlistElem
-					.select("div.lister-item-content").first()
-					.select("h3.lister-item-header>span.lister-item-index")
-					.text().replace(".", "")) + ".");
+//			System.out.println(" Element " + Integer.parseInt(mlistElem
+//					.select("div.lister-item-content").first()
+//					.select("h3.lister-item-header>span.lister-item-index")
+//					.text().replace(".", "")) + ".");
 			
-			itemContentsList = mlistElem.select("div.lister-item-content").first().children();
 			itemContents = mlistElem.select("div.lister-item-content").first();
 			
-			/* 
-			 * item contents format, by element
-			 * 
-			 * 0 - h3	lister-item-header:		Title
-			 * 1 - p	text-muted:			MPAA | Duration | Genres
-			 * 2 - div	ratings-bar:		Rating | Metascore
-			 * 3 - p	text-muted:			Summary
-			 * 4 - p	<none>:				Director(s) | Stars
-			 * 5 - p	sort-num_votes-visible:		Num Votes | Gross
-			 */
 			
 			// Year Ranking
 //			System.out.println("\t  Year Ranking:");
 //			System.out.println("\t\t  " + Integer.parseInt(itemContents
 //					.select("h3.lister-item-header>span.lister-item-index")
 //					.text().replace(".", "")));
-			// Title
-			System.out.println("\t  Title, MPAA, Duration:");
-			System.out.println("\t\t  " + itemContents
-					.select("h3.lister-item-header>a").text());
 			
-			// MPAA
-			System.out.println("\t\t  " + itemContents
-					.select("p.text-muted").first().select("span.certificate")
-					.text());
-			// Duration (Minutes)
-			System.out.println("\t\t  " + itemContents
-					.select("p.text-muted").first().select("span.runtime")
-					.text().replaceAll("[^0-9]+", ""));
-			
-			// Genres
-			System.out.println("\t  Genres:");
-			System.out.println("\t\t  " + itemContents
-					.select("p.text-muted").first().select("span.genre")
-					.text().split(", ")[0]);
-			if (itemContents.select("p.text-muted").first()
-					.select("span.genre").text().split(", ").length > 1)
-			System.out.println("\t\t  " + itemContents
-					.select("p.text-muted").first().select("span.genre")
-					.text().split(", ")[1]);
-			
-			// Rating
-			System.out.println("\t  Rating, Metascore:");
-			System.out.println("\t\t  " + itemContents
-					.select("div.ratings-bar>"
-							+ "div.inline-block.ratings-imdb-rating").text());
-			// Metascore
-			System.out.println("\t\t  " + itemContents
-					.select("div.ratings-bar>"
-							+ "div.inline-block.ratings-metascore")
-					.select("span.metascore").text());
-			
-			// Summary
-			System.out.println("\t\t  " + itemContents
-					.select("p.text-muted").get(1).text());
+			// IMDb ID, Title, Year
+			tmpElem = itemContents
+					.select("h3.lister-item-header>a").first();
+			movie_data_str = tmpElem.attr("href")
+					.substring(9, 16) + ",\"" +
+					tmpElem.text().replace("\"", "\"\"") + "\"," + 
+					currentYear;
 			
 			
-			
-			
-//			for (int i = 0; i < itemContentsList.size(); i++)
-			for (int i = 0; i < 0; i++)
+			// MPAA, Duration, Genres
+			tmpElem = itemContents
+					.select("p.text-muted").first();
+			if (!tmpElem.select("span.genre").text().isEmpty())
 			{
-				System.out.println("\t" + i + ". " + itemContentsList.get(i).text());
-				
-				switch(i)
-				{
-				case 0:
-					System.out.println("\t\t f-loop: 0");
-//					// Year Ranking
-//					System.out.println("\t\t  " + Integer.parseInt(itemContents.get(i).select("span.lister-item-index").text().replace(".", "")));
-//					// Title
-//					System.out.println("\t\t  " + itemContents.get(i).select("a").text());
-					
-					// Year Ranking
-					System.out.println("\t\t  " + Integer.parseInt(itemContents.select("h3.lister-item-header>span.lister-item-index").text().replace(".", "")));
-					// Title
-					System.out.println("\t\t  " + itemContents.select("h3.lister-item-header>a").text());
-					break;
-				case 1:
-					System.out.println("\t\t f-loop: 1");
-					// MPAA
-					System.out.println("\t\t  " + itemContentsList.get(i).select("span.certificate").text());
-					// Duration (Minutes)
-					System.out.println("\t\t  " + itemContentsList.get(i).select("span.runtime").text().replaceAll("[^0-9]+", ""));
-					// Genres
-					System.out.println("\t\t  " + itemContentsList.get(i).select("span.genre").text().split(", ")[0]);
-					if (itemContentsList.get(i).select("span.genre").text().split(", ").length > 1)
-					System.out.println("\t\t  " + itemContentsList.get(i).select("span.genre").text().split(", ")[1]);
-					break;
-				case 2:
-					// Rating
-					System.out.println("\t\t  " + itemContentsList.get(2).select("div.inline-block.ratings-imdb-rating").text());
-					// Metascore
-					System.out.println("\t\t  " + itemContentsList.get(2).select("div.inline-block.ratings-metascore").select("span.metascore").text());
-					break;
-				case 3:
-					// Summary
-					System.out.println("\t\t  " + itemContentsList.get(3).text());
-					break;
-				case 4:
-					// Director | Stars
-					System.out.println("\t\t  " + itemContentsList.get(4).text());
-					break;
-				case 5:
-					// Number of Votes | Gross
-					System.out.println("\t\t  " + itemContentsList.get(5).text());
-					break;
-				default:
-					System.out.println("\t\t  *Defaulted.");
-				}
+				tmpArr = tmpElem.select("span.genre")
+						.text().split(", ");
+			}
+			else
+			{
+				tmpArr = new String[0];
 			}
 			
+			movie_data_str += "," + tmpElem.select("span.certificate").text()
+					+ "," + tmpElem.select("span.runtime")
+						.text().replaceAll("[^0-9]+", "")
+					+ ",";
 			
-//			System.out.println();
-//			System.out.println(itemContents.size());
-//			System.out.println();
+			tmpIdx = 0;
+			for (String genre : tmpArr)
+			{
+				if (tmpIdx > 0)
+				{
+					 movie_data_str += "++";
+				}
+				movie_data_str += genre;
+				tmpIdx++;
+			}
 			
-//			System.out.println("\t" + mlistElem.text());
+			// Rating, Metascore
+			tmpElem = itemContents
+					.select("div.ratings-bar").first();
+			movie_data_str += "," + tmpElem.select(
+					"div.inline-block.ratings-imdb-rating").text() + ","
+					+ tmpElem.select("div.inline-block.ratings-metascore")
+					.select("span.metascore").text();
+			
+			// Summary
+			movie_data_str += ",\"" + 
+					itemContents.select("p.text-muted").get(1).text()
+					.replace("\"", "\"\"")
+					+ "\"";
+			
+			// Director | Stars
+			parseCompoundField(itemContents, 1);
+			
+			
+			// Number of Votes | Gross
+			parseCompoundField(itemContents, 2);
+			
+			
+			// Debug Print
+//			System.out.println("------- ------- ------- -------");
+//			System.out.println(movie_data_str);
+//			System.out.println("------- ------- ------- -------");
+			
+			writeToFile(movie_data_str);
 		}
 	}
 	
-	public static void main(String[] args)
+	private void writeCSVHeader()
 	{
+		System.out.println("[MovieListScraper] Starting writeCSVHeader.");
 		
-		setup();
-		connect();
-
-		process();
-		
+		// Header.
+		writer.println("imdbID,title,year,mpaa,duration,genres,rating,"
+				+ "metascore,summary,directors,stars,numvotes,gross");
 		
 	}
+	
+	private void writeToFile(String str)
+	{
+		writer.println(str);
+	}
+	
+	private void closeWriter()
+	{
+		writer.flush();
+		writer.close();
+	}
+	
+	/**
+	 * 1 == director/stars
+	 * 2 == votes/gross
+	 * 
+	 * @param itemContents
+	 * @param id
+	 */
+	private void parseCompoundField(Element itemContents, int id)
+	{
+		Element tmpElem;
+		String[] tmpArr;
+		String cmpStr1, cmpStr2;
+		String tmpStr1, tmpStr2;
+		int tmpIdx;
+		
+		if (id == 1)
+		{
+			tmpElem = itemContents.select("p").get(2);
+			cmpStr1 = "Director";
+			cmpStr2 = "Star";
+		}
+		else if (id == 2)
+		{
+			tmpElem = itemContents.select("p.sort-num_votes-visible").first();
+			cmpStr1 = "Votes";
+			cmpStr2 = "Gross";
+		}
+		else
+		{
+			movie_data_str += "error: parseCompountField-id";
+			return;
+		}
+		
+		
+		if (!tmpElem.text().isEmpty())
+		{
+			tmpArr = tmpElem.text().split(" \\| ");
+			
+			if (tmpArr.length == 2)
+			{
+				movie_data_str += ",";
+				
+				tmpStr1 = tmpArr[0];
+				tmpStr2 = tmpArr[1];
+				
+				tmpArr = tmpStr1.split(": ")[1].split(", ");
+				if (!tmpStr1.contains(cmpStr1))
+				{
+					movie_data_str += "error";
+				}
+				else
+				{
+					tmpIdx = 0;
+					for (String dirVotes : tmpArr)
+					{
+						if (tmpIdx > 0)
+						{
+							 movie_data_str += "++";
+						}
+						movie_data_str += dirVotes.replace(",", "");
+						tmpIdx++;
+					}
+				}
+
+				movie_data_str += ",";
+				tmpArr = tmpStr2.split(": ")[1].split(", ");
+				if (!tmpStr2.contains(cmpStr2))
+				{
+					movie_data_str += "error";
+				}
+				else
+				{
+					tmpIdx = 0;
+					for (String starGross : tmpArr)
+					{
+						if (tmpIdx > 0)
+						{
+							 movie_data_str += "++";
+						}
+						movie_data_str += starGross.replace(",", "");
+						tmpIdx++;
+					}
+				}
+			}
+			else if (tmpArr.length == 1)
+			{
+				tmpStr1 = tmpArr[0];
+				tmpArr = tmpStr1.split(": ")[1].split(", ");
+				movie_data_str += ",";
+
+				if (tmpStr1.contains(cmpStr2))
+				{
+					movie_data_str += ",";
+				}
+				
+				tmpIdx = 0;
+				for (String dirStar : tmpArr)
+				{
+					if (tmpIdx > 0)
+					{
+						 movie_data_str += "++";
+					}
+					movie_data_str += dirStar.replace(",", "");
+					tmpIdx++;
+				}
+				
+				if (tmpStr1.contains(cmpStr1))
+				{
+					movie_data_str += ",";
+				}
+			}
+			else
+			{
+				movie_data_str += ",,";
+			}
+		}
+		else
+		{
+			movie_data_str += ",,";
+		}
+	}
+	
 
 }
