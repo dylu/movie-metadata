@@ -26,30 +26,21 @@ public class MovieListScraper
 			"sort=moviemeter,asc&title_type=feature&year=";
 	
 	
-	
 	private PrintWriter writer;
 	
-	private int startYear = 1920;
-	private int endYear = 1940;
-	private int pageDepth = 4;
-
+	private int startYear;
+	private int endYear;
+	private int pageDepth;
 	private int currentPage;
 	private int currentYear;
 	
-	private String urlSearchParams = URL_PARAM_BASE + 
-			currentYear + "," + currentYear;
+	private String urlSearchParams;
+	private String url;
+	private String outFileSuffix;
+	private Response response;
+	private Document doc;
 	
-	private String url = BASE_URL + urlSearchParams;
-	
-	
-	
-
-	private String outFileSuffix = "01";
-	
-	
-	private static Response response;
-	private static Document doc;
-	private static String movie_data_str = "";
+	private String movieDataStr;
 	
 
 	public MovieListScraper(int startYear, int endYear, int pageDepth)
@@ -63,13 +54,17 @@ public class MovieListScraper
 	
 	private void setup()
 	{
+		movieDataStr = "";
 		currentYear = startYear-1;
-//		urlSearchParams = URL_PARAM_BASE + 
-//				currentYear + "," + currentYear;
-//		
-//		url = BASE_URL + urlSearchParams;
-//		
-//		url += "&page=" + currentPage + "&ref_=adv_nxt";
+		
+		if (startYear == endYear)
+		{
+			outFileSuffix = "" + startYear;
+		}
+		else
+		{
+			outFileSuffix = startYear + "-" + endYear;
+		}
 		
 		writer = null;
 		try {
@@ -132,20 +127,21 @@ public class MovieListScraper
 	
 	public void process()
 	{
-//		setup();
-//		connect();
+		System.out.println("[MovieListScraper] Starting process for years "
+				+ startYear + "-" + endYear + ", page depth " + pageDepth);
 		
 		writeCSVHeader();
 		
 		for (int cYear = startYear; cYear < endYear+1; cYear++)
 		{
 			nextYear();
-			System.out.println("Year: " + currentYear);
-			for (int cPage = 1; cPage < pageDepth; cPage++)
+			System.out.println("  Year: " + currentYear);
+			
+			for (int cPage = 0; cPage < pageDepth; cPage++)
 			{
 				nextPage();
-				if (currentPage%2 == 0)
-					System.out.println("  Page:\t" + currentPage);
+				if (currentPage%2 == 0 || cPage == pageDepth-1)
+					System.out.println("    Page:\t" + currentPage);
 				
 				Elements movieList = doc.select("div.lister-list")
 						.select("div.lister-item.mode-advanced");
@@ -154,11 +150,14 @@ public class MovieListScraper
 		}
 
 		closeWriter();
+		
+		System.out.println("[MovieListScraper] Process completed for years "
+				+ startYear + "-" + endYear + ", page depth " + pageDepth);
+		
 	}
 	
 	/**
 	 * Method to process the resulting lister-list class off IMDb.
-	 * 
 	 * 
 	 * @param movieList
 	 */
@@ -171,11 +170,6 @@ public class MovieListScraper
 		
 		for (Element mlistElem : movieList)
 		{
-//			System.out.println(" Element " + Integer.parseInt(mlistElem
-//					.select("div.lister-item-content").first()
-//					.select("h3.lister-item-header>span.lister-item-index")
-//					.text().replace(".", "")) + ".");
-			
 			itemContents = mlistElem.select("div.lister-item-content").first();
 			
 			
@@ -188,7 +182,7 @@ public class MovieListScraper
 			// IMDb ID, Title, Year
 			tmpElem = itemContents
 					.select("h3.lister-item-header>a").first();
-			movie_data_str = tmpElem.attr("href")
+			movieDataStr = tmpElem.attr("href")
 					.substring(9, 16) + ",\"" +
 					tmpElem.text().replace("\"", "\"\"") + "\"," + 
 					currentYear;
@@ -207,7 +201,7 @@ public class MovieListScraper
 				tmpArr = new String[0];
 			}
 			
-			movie_data_str += "," + tmpElem.select("span.certificate").text()
+			movieDataStr += "," + tmpElem.select("span.certificate").text()
 					+ "," + tmpElem.select("span.runtime")
 						.text().replaceAll("[^0-9]+", "")
 					+ ",";
@@ -217,22 +211,22 @@ public class MovieListScraper
 			{
 				if (tmpIdx > 0)
 				{
-					 movie_data_str += "++";
+					 movieDataStr += "++";
 				}
-				movie_data_str += genre;
+				movieDataStr += genre;
 				tmpIdx++;
 			}
 			
 			// Rating, Metascore
 			tmpElem = itemContents
 					.select("div.ratings-bar").first();
-			movie_data_str += "," + tmpElem.select(
+			movieDataStr += "," + tmpElem.select(
 					"div.inline-block.ratings-imdb-rating").text() + ","
 					+ tmpElem.select("div.inline-block.ratings-metascore")
 					.select("span.metascore").text();
 			
 			// Summary
-			movie_data_str += ",\"" + 
+			movieDataStr += ",\"" + 
 					itemContents.select("p.text-muted").get(1).text()
 					.replace("\"", "\"\"")
 					+ "\"";
@@ -246,11 +240,10 @@ public class MovieListScraper
 			
 			
 			// Debug Print
-//			System.out.println("------- ------- ------- -------");
-//			System.out.println(movie_data_str);
-//			System.out.println("------- ------- ------- -------");
+//			System.err.println("------- ------- ------- -------");
+//			System.err.println(movie_data_str);
 			
-			writeToFile(movie_data_str);
+			writeToFile(movieDataStr);
 		}
 	}
 	
@@ -304,7 +297,7 @@ public class MovieListScraper
 		}
 		else
 		{
-			movie_data_str += "error: parseCompountField-id";
+			movieDataStr += "error: parseCompountField-id";
 			return;
 		}
 		
@@ -315,7 +308,7 @@ public class MovieListScraper
 			
 			if (tmpArr.length == 2)
 			{
-				movie_data_str += ",";
+				movieDataStr += ",";
 				
 				tmpStr1 = tmpArr[0];
 				tmpStr2 = tmpArr[1];
@@ -323,7 +316,7 @@ public class MovieListScraper
 				tmpArr = tmpStr1.split(": ")[1].split(", ");
 				if (!tmpStr1.contains(cmpStr1))
 				{
-					movie_data_str += "error";
+					movieDataStr += "error";
 				}
 				else
 				{
@@ -332,18 +325,18 @@ public class MovieListScraper
 					{
 						if (tmpIdx > 0)
 						{
-							 movie_data_str += "++";
+							 movieDataStr += "++";
 						}
-						movie_data_str += dirVotes.replace(",", "");
+						movieDataStr += dirVotes.replace(",", "");
 						tmpIdx++;
 					}
 				}
 
-				movie_data_str += ",";
+				movieDataStr += ",";
 				tmpArr = tmpStr2.split(": ")[1].split(", ");
 				if (!tmpStr2.contains(cmpStr2))
 				{
-					movie_data_str += "error";
+					movieDataStr += "error";
 				}
 				else
 				{
@@ -352,9 +345,9 @@ public class MovieListScraper
 					{
 						if (tmpIdx > 0)
 						{
-							 movie_data_str += "++";
+							 movieDataStr += "++";
 						}
-						movie_data_str += starGross.replace(",", "");
+						movieDataStr += starGross.replace(",", "");
 						tmpIdx++;
 					}
 				}
@@ -363,11 +356,11 @@ public class MovieListScraper
 			{
 				tmpStr1 = tmpArr[0];
 				tmpArr = tmpStr1.split(": ")[1].split(", ");
-				movie_data_str += ",";
+				movieDataStr += ",";
 
 				if (tmpStr1.contains(cmpStr2))
 				{
-					movie_data_str += ",";
+					movieDataStr += ",";
 				}
 				
 				tmpIdx = 0;
@@ -375,25 +368,25 @@ public class MovieListScraper
 				{
 					if (tmpIdx > 0)
 					{
-						 movie_data_str += "++";
+						 movieDataStr += "++";
 					}
-					movie_data_str += dirStar.replace(",", "");
+					movieDataStr += dirStar.replace(",", "");
 					tmpIdx++;
 				}
 				
 				if (tmpStr1.contains(cmpStr1))
 				{
-					movie_data_str += ",";
+					movieDataStr += ",";
 				}
 			}
 			else
 			{
-				movie_data_str += ",,";
+				movieDataStr += ",,";
 			}
 		}
 		else
 		{
-			movie_data_str += ",,";
+			movieDataStr += ",,";
 		}
 	}
 	
