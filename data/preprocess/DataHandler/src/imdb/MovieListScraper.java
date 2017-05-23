@@ -141,7 +141,7 @@ public class MovieListScraper
 			for (int cPage = 0; cPage < pageDepth; cPage++)
 			{
 				nextPage();
-				if (cPage == 0 || currentPage%(Math.min(pageDepth/10, 1)) == 0 
+				if (cPage == 0 || currentPage%(Math.max(pageDepth/10, 1)) == 0 
 						|| cPage == pageDepth-1)
 					System.out.println("    Page:  " + currentPage);
 				
