@@ -23,7 +23,7 @@ public class MovieListScraper
 	private static final int TIMEOUT = 12000;
 
 	private static final String URL_PARAM_BASE = "search/title?" + 
-			"sort=moviemeter,asc&title_type=feature&year=";
+			"sort=num_votes,desc&title_type=feature&year=";
 	
 	
 	private PrintWriter writer;
@@ -236,6 +236,7 @@ public class MovieListScraper
 			// Summary
 			movieDataStr += ",\"" + 
 					itemContents.select("p.text-muted").get(1).text()
+					.replace("Add a Plot", "")
 					.replace("\"", "\"\"")
 					+ "\"";
 			
