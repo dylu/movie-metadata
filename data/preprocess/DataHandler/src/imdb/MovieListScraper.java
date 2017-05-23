@@ -59,11 +59,12 @@ public class MovieListScraper
 		
 		if (startYear == endYear)
 		{
-			outFileSuffix = "" + startYear;
+			outFileSuffix = "" + startYear + "_" + pageDepth;
 		}
 		else
 		{
-			outFileSuffix = startYear + "-" + endYear;
+			outFileSuffix = startYear + "-" + endYear + 
+					"_" + pageDepth;
 		}
 		
 		writer = null;
@@ -140,8 +141,8 @@ public class MovieListScraper
 			for (int cPage = 0; cPage < pageDepth; cPage++)
 			{
 				nextPage();
-				if (currentPage%2 == 0 || cPage == pageDepth-1)
-					System.out.println("    Page:\t" + currentPage);
+//				if (currentPage%2 == 0 || cPage == pageDepth-1)
+					System.out.println("    Page:  " + currentPage);
 				
 				Elements movieList = doc.select("div.lister-list")
 						.select("div.lister-item.mode-advanced");
@@ -220,10 +221,17 @@ public class MovieListScraper
 			// Rating, Metascore
 			tmpElem = itemContents
 					.select("div.ratings-bar").first();
-			movieDataStr += "," + tmpElem.select(
-					"div.inline-block.ratings-imdb-rating").text() + ","
-					+ tmpElem.select("div.inline-block.ratings-metascore")
-					.select("span.metascore").text();
+			if (tmpElem != null)
+			{
+				movieDataStr += "," + tmpElem.select(
+						"div.inline-block.ratings-imdb-rating").text() + ","
+						+ tmpElem.select("div.inline-block.ratings-metascore")
+						.select("span.metascore").text();
+			}
+			else
+			{
+				movieDataStr += ",,";
+			}
 			
 			// Summary
 			movieDataStr += ",\"" + 
@@ -277,6 +285,13 @@ public class MovieListScraper
 	 */
 	private void parseCompoundField(Element itemContents, int id)
 	{
+		// Short Circuit, if empty.
+		if (itemContents == null || itemContents.text().isEmpty())
+		{
+			movieDataStr += ",,";
+			return;
+		}
+		
 		Element tmpElem;
 		String[] tmpArr;
 		String cmpStr1, cmpStr2;
@@ -301,8 +316,7 @@ public class MovieListScraper
 			return;
 		}
 		
-		
-		if (!tmpElem.text().isEmpty())
+		if (tmpElem != null && !tmpElem.text().isEmpty())
 		{
 			tmpArr = tmpElem.text().split(" \\| ");
 			
