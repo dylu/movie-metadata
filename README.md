@@ -1,20 +1,12 @@
-# movie-vis
-Visualization for 05-499: Visualization in HCI | Visualizing Movie Metadata
+# movie-metadata
+Visualizing Movie Metadata
 
 --
 
-Milestone 1:
+Data collected from MovieLens and IMDb.
 
-I have visualized only a basic graph at the moment, sorted by Genre.
+Trying to transition to solely IMDb.
 
-Most of the effort in the first two weeks were collecting and cleaning data, from files provided by MovieLens as well as scraping IMDb's website.
-
-To show I have a relevant datastructure in place, I've printed the structure into my console:
-It should appear at the end, after the line:
-```
-[dataloader.loadRatingData] 
- - Printing movies obj
-```
 
 The movies object is organized as such:  It's an array of all movies in the MovieLens database subset, with its MovieLens ID being the index position in the array.  (MovieLens Movie ID 423 = movies[423])
 
