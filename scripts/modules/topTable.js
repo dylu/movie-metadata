@@ -3,6 +3,7 @@
  */
 
 var db_table_filtered;
+var IMDB_NUM_DIGITS;
 
 /**
  * First draw -- same as any other draw.
@@ -11,6 +12,30 @@ function drawModule_table()
 {
 	update_tableDB();
 	redrawFiltered_table();
+}
+
+/**
+ * Pads a number value to be x digits, for IMDb urls. (7 for imdb)
+ * Returns a string value.
+ */
+function pad(input, numDigits)
+{
+	if (!numDigits || numDigits <= 0)
+	{
+		numDigits = IMDB_NUM_DIGITS;
+	}
+
+	var output = "";
+
+	var numZeros = input.toString().length;
+	for (i = 0; i < numZeros; i++)
+	{
+		output += "0";
+	}
+
+	output += input;
+
+	return output;
 }
 
 /**
@@ -43,7 +68,7 @@ function redrawFiltered_table()
         	.merge(table_trs);
 
         table_trs.on("click", function(d, i) {
-        	window.open(base_url + d.imdbId);
+        	window.open(base_url + pad(d.imdbId, IMDB_NUM_DIGITS));
         });
 
         table_tds = table_trs.selectAll("td")
