@@ -27,7 +27,7 @@ function pad(input, numDigits)
 
 	var output = "";
 
-	var numZeros = input.toString().length;
+	var numZeros = numDigits - input.toString().length;
 	for (i = 0; i < numZeros; i++)
 	{
 		output += "0";
