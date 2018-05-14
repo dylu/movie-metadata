@@ -13,7 +13,12 @@ data/preprocess/RemoteSystemsTempFiles
 
 
 #docs
+
 *.doc
 *.docx
 *.tmp
 
+
+#scripts
+
+*.sh
