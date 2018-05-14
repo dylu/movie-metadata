@@ -1,7 +1,42 @@
 # movie-metadata
 Visualizing Movie Metadata
 
+david lu
+(dlu1)
+
 --
+
+## Introduction
+
+Project for an Independent Study, CMU Spring 2018.
+
+This project examines different data visualization methods for exploring a collection of data, for easier human consumption and processing of said data.
+
+This specific case uses Movie Metadata and tries to answer the question "What are the top rated movies of a specific genre or collection of genres, with various other limiters?"
+
+Goals of this project:
+- Make it easier for a user to process and understand than a text-based list.
+- Make it easier for a user to use and navigate for a specific query.
+- Make it intuitive for a user to use, even without instructions.
+
+
+--
+
+## Future Work
+
+There's a lot to improve upon here, but here are some immediate things of note:
+
+- Make the website responsive.
+- Make it easier for users to realize how to deselect a selection
+- Explore different graph layouts
+- Explore more meaningful metadata sorting graphs/fields (maybe month isn't as meaningful)
+- More meaningful filtering of movies (e.g. not enough votes / not popular enough, maybe follow IMDb's list)
+- Better data collection methods (IMDb's top lists per year?)
+
+
+--
+
+### Data
 
 Data collected from MovieLens and IMDb.
 
